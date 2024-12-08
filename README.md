@@ -7,8 +7,9 @@
 
 ### Comments
 - This image uses the kernel528/alpine as the base image (https://github.com/kernel528/alpine-docker)
-- This repo is based on:  
-- https://github.com/docker-library/openjdk/
+- This repo is based on:
+  - JDK: https://github.com/adoptium/containers/blob/d7a5038edcd8ab08b0babaeae09d0c097453a023/21/jdk/alpine/Dockerfile
+  - JRE: 
 - The subfolder 11/jdk and 11/jre from above link as the main source for building purposes.
 - Drone is used to automate the build and publish of the docker images.
 
