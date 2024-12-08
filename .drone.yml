@@ -23,6 +23,8 @@ steps:
         - '21'
       when:
         - push
+    environment:
+      DOCKER_BUILDKIT: 1
     settings:
       username:
         from_secret: docker_username
@@ -43,6 +45,8 @@ steps:
         - '21'
       when:
         - push
+    environment:
+      DOCKER_BUILDKIT: 1
     settings:
       username:
         from_secret: docker_username
