@@ -1,4 +1,4 @@
-[![Build Status](http://drone.kernelsanders.biz/api/badges/kernel528/openjdk-docker/status.svg)](http://drone.kernelsanders.biz/kernel528/openjdk-docker)
+[![Build Status](http://drone.kernelsanders.biz:8080/api/badges/kernel528/java-docker/status.svg?ref=refs/heads/main)](http://drone.kernelsanders.biz:8080/kernel528/java-docker)
 
 # Source repo to build the JDK and JRE docker images.
 - These can be called as such:
