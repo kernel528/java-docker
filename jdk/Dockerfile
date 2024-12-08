@@ -13,8 +13,8 @@
 #
 # Sourced from:  https://github.com/adoptium/containers/blob/d7a5038edcd8ab08b0babaeae09d0c097453a023/21/jdk/alpine/Dockerfile
 
-# FROM kernel528/alpine:3.20.3
-FROM alpine:3.20
+FROM kernel528/alpine:3.20.3
+# FROM alpine:3.20
 
 
 ENV JAVA_HOME=/opt/java/openjdk
