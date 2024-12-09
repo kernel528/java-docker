@@ -34,8 +34,8 @@ steps:
       repo: kernel528/java
       tags:
         - jdk-latest
-        - jdk21.0.5+11
-        - jdk21.0.5+11-${DRONE_COMMIT:0:8}-drone-build-${DRONE_BUILD_NUMBER}
+        - jdk21.0.5-11
+        - jdk21.0.5-11-${DRONE_COMMIT:0:8}-drone-build-${DRONE_BUILD_NUMBER}
 
   # Build JRE Image
   - name: docker-build-jre
@@ -56,8 +56,8 @@ steps:
       repo: kernel528/java
       tags:
         - jre-latest
-        - jre21.0.5+11
-        - jre21.0.5+11-${DRONE_COMMIT:0:8}-drone-build-${DRONE_BUILD_NUMBER}
+        - jre21.0.5-11
+        - jre21.0.5-11-${DRONE_COMMIT:0:8}-drone-build-${DRONE_BUILD_NUMBER}
 
   # Test images
   - name: docker-test
