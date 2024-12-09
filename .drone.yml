@@ -59,8 +59,8 @@ steps:
         - jre21.0.5-11
         - jre21.0.5-11-${DRONE_COMMIT:0:8}-drone-build-${DRONE_BUILD_NUMBER}
 
-  # Test images
-  - name: docker-test
+  # Test JDK image
+  - name: docker-test-jdk
     image: kernel528/java:jdk-latest
     when:
       branch:
@@ -70,6 +70,21 @@ steps:
     commands:
       - "uname -a"
       - "java -version"
+      - "javac src/hello-world/HelloWorld.java"
+      - "java -classpath src/hello-world HelloWorld"
+
+  # Test JRE Image
+  - name: docker-test-jre
+    image: kernel528/java:jre-latest
+    when:
+      branch:
+        - main
+      when:
+        - push
+    commands:
+      - "uname -a"
+      - "java -version"
+      - "java -classpath src/hello-world HelloWorld"
 
   # Slack notification
   - name: notify
