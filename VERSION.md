@@ -2,3 +2,6 @@
 * v1.0.0 - Initial commit.
 * v1.1.0 - Updated with JDK Dockerfile.
 * v1.2.0 - Added .drone.yml
+* v1.3.0 - Updated with JRE Dockerfile.
+* v1.4.0 - Updated drone builds.
+* v1.5.0 - Updated docker-tests steps to build hello-world java app with JDK and execute with JRE.
