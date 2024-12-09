@@ -1,4 +1,4 @@
-[![Build Status](http://drone.kernelsanders.biz/api/badges/kernel528/openjdk-docker/status.svg)](http://drone.kernelsanders.biz/kernel528/openjdk-docker)
+[![Build Status](http://drone.kernelsanders.biz:8080/api/badges/kernel528/java-docker/status.svg?ref=refs/heads/main)](http://drone.kernelsanders.biz:8080/kernel528/java-docker)
 
 # Source repo to build the JDK and JRE docker images.
 - These can be called as such:
@@ -9,7 +9,7 @@
 - This image uses the kernel528/alpine as the base image (https://github.com/kernel528/alpine-docker)
 - This repo is based on:
   - JDK: https://github.com/adoptium/containers/blob/d7a5038edcd8ab08b0babaeae09d0c097453a023/21/jdk/alpine/Dockerfile
-  - JRE: 
+  - JRE: https://github.com/adoptium/containers/blob/d7a5038edcd8ab08b0babaeae09d0c097453a023/21/jre/alpine/Dockerfile
 - The subfolder 11/jdk and 11/jre from above link as the main source for building purposes.
 - Drone is used to automate the build and publish of the docker images.
 
