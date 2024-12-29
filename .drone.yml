@@ -82,7 +82,6 @@ trigger:
     - main
   event:
     - push
-    - tag
 
 # Test java-docker images
 steps:
@@ -96,6 +95,7 @@ steps:
         - push
     commands:
       - "uname -a"
+      - "cat /etc/os-release"
       - "java -version"
       - "javac src/hello-world/HelloWorld.java"
       - "java -classpath src/hello-world HelloWorld"
@@ -110,8 +110,72 @@ steps:
         - push
     commands:
       - "uname -a"
+      - "cat /etc/os-release"
       - "java -version"
       - "java -classpath src/hello-world HelloWorld"
+
+  # Slack notification
+  - name: slack-notification
+    image: plugins/slack
+    when:
+      status:
+        - failure
+        - success
+    settings:
+      webhook:
+        from_secret: slack_webhook_drone_alerts
+
+---
+
+kind: pipeline
+type: docker
+name: java-image-tag
+
+trigger:
+  event:
+    - tag
+
+# Build the jdk and jre docker images for amd64 architecture
+steps:
+  # Build JDK image
+  - name: docker-build-jdk
+    image: plugins/docker
+    environment:
+      DOCKER_BUILDKIT: 1
+    when:
+      event:
+        - tag
+    settings:
+      platforms:
+        - linux/amd64
+      username:
+        from_secret: docker_username
+      password:
+        from_secret: docker_password
+      dockerfile: jdk/Dockerfile
+      repo: kernel528/java
+      tags:
+        - jdk-${DRONE_TAG}
+
+  # Build JRE Image
+  - name: docker-build-jre
+    image: plugins/docker
+    environment:
+      DOCKER_BUILDKIT: 1
+    when:
+      event:
+        - tag
+    settings:
+      platforms:
+        - linux/amd64
+      username:
+        from_secret: docker_username
+      password:
+        from_secret: docker_password
+      dockerfile: jre/Dockerfile
+      repo: kernel528/java
+      tags:
+        - jre-${DRONE_TAG}
 
   # Slack notification
   - name: slack-notification
