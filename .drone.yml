@@ -6,26 +6,24 @@ name: java-image-build
 trigger:
   branch:
     - '21'
-    - main
   event:
-    - custom
-    - push
     - pull_request
 
-# Pipeline steps
+# Build the jdk and jre docker images for amd64 architecture
 steps:
-
-  # Build JDK images
+  # Build JDK image
   - name: docker-build-jdk
     image: plugins/docker
+    environment:
+      DOCKER_BUILDKIT: 1
     when:
       branch:
         - '21'
       when:
         - push
-    environment:
-      DOCKER_BUILDKIT: 1
     settings:
+      platforms:
+        - linux/amd64
       username:
         from_secret: docker_username
       password:
@@ -35,19 +33,21 @@ steps:
       tags:
         - jdk-latest
         - jdk21.0.5-11
-        - jdk21.0.5-11-${DRONE_COMMIT:0:8}-drone-build-${DRONE_BUILD_NUMBER}
+        - jdk21.0.5-11-drone-build-${DRONE_BUILD_NUMBER}
 
   # Build JRE Image
   - name: docker-build-jre
     image: plugins/docker
+    environment:
+      DOCKER_BUILDKIT: 1
     when:
       branch:
         - '21'
       when:
         - push
-    environment:
-      DOCKER_BUILDKIT: 1
     settings:
+      - platforms:
+          - linux/amd64
       username:
         from_secret: docker_username
       password:
@@ -57,9 +57,36 @@ steps:
       tags:
         - jre-latest
         - jre21.0.5-11
-        - jre21.0.5-11-${DRONE_COMMIT:0:8}-drone-build-${DRONE_BUILD_NUMBER}
+        - jre21.0.5-11-drone-build-${DRONE_BUILD_NUMBER}
 
-  # Test JDK image
+  # Slack notification
+  - name: slack-notification
+    image: plugins/slack
+    when:
+      status:
+        - failure
+        - success
+    settings:
+      webhook:
+        from_secret: slack_webhook_drone_alerts
+
+---
+
+kind: pipeline
+type: docker
+name: java-image-test
+
+# Trigger conditions
+trigger:
+  branch:
+    - main
+  event:
+    - push
+    - tag
+
+# Test java-docker images
+steps:
+  # Test JDK Image
   - name: docker-test-jdk
     image: kernel528/java:jdk-latest
     when:
@@ -87,12 +114,12 @@ steps:
       - "java -classpath src/hello-world HelloWorld"
 
   # Slack notification
-  - name: notify
+  - name: slack-notification
     image: plugins/slack
-    settings:
-      webhook:
-        from_secret: slack_webhook_drone_alerts
     when:
       status:
         - failure
         - success
+    settings:
+      webhook:
+        from_secret: slack_webhook_drone_alerts
