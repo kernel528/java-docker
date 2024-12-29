@@ -5,3 +5,4 @@
 * v1.3.0 - Updated with JRE Dockerfile.
 * v1.4.0 - Updated drone builds.
 * v1.5.0 - Updated docker-tests steps to build hello-world java app with JDK and execute with JRE.
+* v2.0.0 - Updated to kernel528/alpine:3.21.0 base image.
