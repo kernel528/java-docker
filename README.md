@@ -1,15 +1,18 @@
-[![Build Status](http://drone.kernelsanders.biz:8080/api/badges/kernel528/java-docker/status.svg)](http://drone.kernelsanders.biz:8080/kernel528/java-docker)
-[![Latest Version](https://img.shields.io/github/v/tag/kernel528/java-docker)](https://github.com/kernel528/java-docker/releases/latest)
-[![Docker Pulls](https://img.shields.io/docker/pulls/kernel528/java)](https://hub.docker.com/r/kernel528/java)
-[![Docker Image Size (tag)](https://img.shields.io/docker/image-size/kernel528/java/jdk-latest)](https://hub.docker.com/r/kernel528/java/jdk-latest)
-[![Docker Image Size (tag)](https://img.shields.io/docker/image-size/kernel528/java/jre-latest)](https://hub.docker.com/r/kernel528/java/jre-latest)
-[![Docker Image Version (latest semver)](https://img.shields.io/docker/v/kernel528/java?sort=semver)](https://hub.docker.com/r/kernel528/java)
+_[![Build Status](http://drone.kernelsanders.biz:8080/api/badges/kernel528/java-docker/status.svg)](http://drone.kernelsanders.biz:8080/kernel528/java-docker)_
+_[![Latest Version](https://img.shields.io/github/v/tag/kernel528/java-docker)](https://github.com/kernel528/java-docker/releases/latest)_
+
+[![Docker Image Size (tag)](https://img.shields.io/docker/image-size/kernel528/jdk/jdk-latest)](https://hub.docker.com/r/kernel528/jdk/jdk-latest)
+[![Docker Image Version (latest jdk semver)](https://img.shields.io/docker/v/kernel528/jdk?sort=semver)](https://hub.docker.com/r/kernel528/jdk)
+
+[![Docker Image Size (tag)](https://img.shields.io/docker/image-size/kernel528/jre/jre-latest)](https://hub.docker.com/r/kernel528/jre/jre-latest)
+[![Docker Image Version (latest jre semver)](https://img.shields.io/docker/v/kernel528/jre?sort=semver)](https://hub.docker.com/r/kernel528/jre)
+
 
 # Java Docker
 ### Source repo to build the JDK and JRE docker images.
 - These can be called as such:
-  - JDK:  kernel528/jdk:latest
-  - JRE:  kernel528/jre:latest
+  - JDK:  kernel528/jdk:jdk-latest
+  - JRE:  kernel528/jre:jre-latest
 
 ### Comments
 - This image uses the kernel528/alpine as the base image (https://github.com/kernel528/alpine-docker)
