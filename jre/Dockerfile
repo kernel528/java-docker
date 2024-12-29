@@ -12,7 +12,7 @@
 # limitations under the License.
 #
 
-FROM kernel528/alpine:3.20.3
+FROM kernel528/alpine:3.21.0
 
 ENV JAVA_HOME=/opt/java/openjdk
 ENV PATH=$JAVA_HOME/bin:$PATH
