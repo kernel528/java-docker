@@ -29,7 +29,7 @@ steps:
       password:
         from_secret: docker_password
       dockerfile: jdk/Dockerfile
-      repo: kernel528/java
+      repo: kernel528/jdk
       tags:
         - jdk-latest
         - jdk21.0.5-11
@@ -53,7 +53,7 @@ steps:
       password:
         from_secret: docker_password
       dockerfile: jre/Dockerfile
-      repo: kernel528/java
+      repo: kernel528/jre
       tags:
         - jre-latest
         - jre21.0.5-11
@@ -87,7 +87,7 @@ trigger:
 steps:
   # Test JDK Image
   - name: docker-test-jdk
-    image: kernel528/java:jdk-latest
+    image: kernel528/jdk:jdk-latest
     when:
       branch:
         - main
@@ -102,7 +102,7 @@ steps:
 
   # Test JRE Image
   - name: docker-test-jre
-    image: kernel528/java:jre-latest
+    image: kernel528/jre:jre-latest
     when:
       branch:
         - main
@@ -153,7 +153,7 @@ steps:
       password:
         from_secret: docker_password
       dockerfile: jdk/Dockerfile
-      repo: kernel528/java
+      repo: kernel528/jdk
       tags:
         - jdk-${DRONE_TAG}
 
@@ -173,7 +173,7 @@ steps:
       password:
         from_secret: docker_password
       dockerfile: jre/Dockerfile
-      repo: kernel528/java
+      repo: kernel528/jre
       tags:
         - jre-${DRONE_TAG}
 
