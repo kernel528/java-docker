@@ -46,8 +46,8 @@ steps:
       when:
         - push
     settings:
-      - platforms:
-          - linux/amd64
+      platforms:
+        - linux/amd64
       username:
         from_secret: docker_username
       password:
