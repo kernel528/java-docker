@@ -5,11 +5,11 @@ name: java-image-build
 # Trigger conditions
 trigger:
   branch:
-    - '21'
+    - '21-arm64'
   event:
     - pull_request
 
-# Build the jdk and jre docker images for amd64 architecture
+# Build the jdk and jre docker images for arm64 architecture
 steps:
   # Build JDK image
   - name: docker-build-jdk
@@ -18,12 +18,12 @@ steps:
       DOCKER_BUILDKIT: 1
     when:
       branch:
-        - '21'
+        - '21-arm64'
       when:
         - push
     settings:
       platforms:
-        - linux/amd64
+        - linux/arm64
       username:
         from_secret: docker_username
       password:
@@ -31,9 +31,9 @@ steps:
       dockerfile: jdk/Dockerfile
       repo: kernel528/jdk
       tags:
-        - jdk-latest
-        - jdk21.0.5-11
-        - jdk21.0.5-11-drone-build-${DRONE_BUILD_NUMBER}
+        - jdk-latest-arm64
+        - jdk21.0.5-11-arm64
+        - jdk21.0.5-11-drone-build-${DRONE_BUILD_NUMBER}-arm64
 
   # Build JRE Image
   - name: docker-build-jre
@@ -42,12 +42,12 @@ steps:
       DOCKER_BUILDKIT: 1
     when:
       branch:
-        - '21'
+        - '21-arm64'
       when:
         - push
     settings:
       platforms:
-        - linux/amd64
+        - linux/arm64
       username:
         from_secret: docker_username
       password:
@@ -55,9 +55,9 @@ steps:
       dockerfile: jre/Dockerfile
       repo: kernel528/jre
       tags:
-        - jre-latest
-        - jre21.0.5-11
-        - jre21.0.5-11-drone-build-${DRONE_BUILD_NUMBER}
+        - jre-latest-arm64
+        - jre21.0.5-11-arm64
+        - jre21.0.5-11-drone-build-${DRONE_BUILD_NUMBER}-arm64
 
   # Slack notification
   - name: slack-notification
@@ -79,7 +79,7 @@ name: java-image-test
 # Trigger conditions
 trigger:
   branch:
-    - main
+    - main-arm64
   event:
     - push
 
@@ -87,10 +87,10 @@ trigger:
 steps:
   # Test JDK Image
   - name: docker-test-jdk
-    image: kernel528/jdk:jdk-latest
+    image: kernel528/jdk:jdk-latest-arm64
     when:
       branch:
-        - main
+        - main-arm64
       when:
         - push
     commands:
@@ -102,10 +102,10 @@ steps:
 
   # Test JRE Image
   - name: docker-test-jre
-    image: kernel528/jre:jre-latest
+    image: kernel528/jre:jre-latest-arm64
     when:
       branch:
-        - main
+        - main-arm64
       when:
         - push
     commands:
@@ -135,7 +135,7 @@ trigger:
   event:
     - tag
 
-# Build the jdk and jre docker images for amd64 architecture
+# Build the jdk and jre docker images for arm64 architecture
 steps:
   # Build JDK image
   - name: docker-build-jdk
@@ -147,7 +147,7 @@ steps:
         - tag
     settings:
       platforms:
-        - linux/amd64
+        - linux/arm64
       username:
         from_secret: docker_username
       password:
@@ -155,7 +155,7 @@ steps:
       dockerfile: jdk/Dockerfile
       repo: kernel528/jdk
       tags:
-        - jdk-${DRONE_TAG}
+        - jdk-${DRONE_TAG}-arm64
 
   # Build JRE Image
   - name: docker-build-jre
@@ -167,7 +167,7 @@ steps:
         - tag
     settings:
       platforms:
-        - linux/amd64
+        - linux/arm64
       username:
         from_secret: docker_username
       password:
@@ -175,7 +175,7 @@ steps:
       dockerfile: jre/Dockerfile
       repo: kernel528/jre
       tags:
-        - jre-${DRONE_TAG}
+        - jre-${DRONE_TAG}-arm64
 
   # Slack notification
   - name: slack-notification
