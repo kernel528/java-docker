@@ -12,6 +12,12 @@ trigger:
 # Build the jdk and jre docker images for arm64 architecture
 steps:
   # Build JDK image
+  - name: setup-qemu
+    image: multiarch/qemu-user-static
+    privileged: true
+    commands:
+      - /bin/qemu-system-arm --version
+
   - name: docker-build-jdk
     image: plugins/docker
     environment:
@@ -86,6 +92,12 @@ trigger:
 # Test java-docker images
 steps:
   # Test JDK Image
+  - name: setup-qemu
+    image: multiarch/qemu-user-static
+    privileged: true
+    commands:
+      - /bin/qemu-system-arm --version
+
   - name: docker-test-jdk
     image: kernel528/jdk:jdk-latest-arm64
     when:
@@ -138,6 +150,12 @@ trigger:
 # Build the jdk and jre docker images for arm64 architecture
 steps:
   # Build JDK image
+  - name: setup-qemu
+    image: multiarch/qemu-user-static
+    privileged: true
+    commands:
+      - /bin/qemu-system-arm --version
+
   - name: docker-build-jdk
     image: plugins/docker
     environment:
