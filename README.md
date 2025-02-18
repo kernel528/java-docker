@@ -6,7 +6,8 @@ _[![Latest Version](https://img.shields.io/github/v/tag/kernel528/java-docker)](
 [![Docker Image Size (tag)](https://img.shields.io/docker/image-size/kernel528/jre/jre-latest)](https://hub.docker.com/r/kernel528/jre/jre-latest)
 
 
-# Java Docker
+# Java Docker (arm64)
+
 ### Source repo to build the JDK and JRE docker images.
 - These can be called as such:
   - JDK:  kernel528/jdk:jdk-latest
