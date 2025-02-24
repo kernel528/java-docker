@@ -12,7 +12,7 @@
 # limitations under the License.
 #
 
-FROM kernel528/alpine:3.21.2
+FROM kernel528/alpine:3.21.3
 
 # Set to root user to install packages
 USER root
