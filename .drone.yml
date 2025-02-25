@@ -18,6 +18,13 @@ steps:
     commands:
       - /usr/bin/qemu-system-arm --version
 
+  - name: setup-buildx
+    image: docker:24.0.2
+    privileged: true
+    commands:
+      - docker buildx create --use
+      - docker buildx inspect --bootstrap
+
   - name: docker-build-jdk
     image: plugins/docker
     environment:
@@ -98,6 +105,13 @@ steps:
     commands:
       - /usr/bin/qemu-system-arm --version
 
+  - name: setup-buildx
+    image: docker:24.0.2
+    privileged: true
+    commands:
+      - docker buildx create --use
+      - docker buildx inspect --bootstrap
+
   - name: docker-test-jdk
     image: kernel528/jdk:jdk-latest-arm64
     when:
@@ -155,6 +169,13 @@ steps:
     privileged: true
     commands:
       - /usr/bin/qemu-system-arm --version
+
+  - name: setup-buildx
+    image: docker:24.0.2
+    privileged: true
+    commands:
+      - docker buildx create --use
+      - docker buildx inspect --bootstrap
 
   - name: docker-build-jdk
     image: plugins/docker
