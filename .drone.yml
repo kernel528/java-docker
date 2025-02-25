@@ -19,6 +19,8 @@ steps:
   - name: setup-buildx
     image: docker:24.0.2
     privileged: true
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
     commands:
       - docker buildx create --use
       - docker buildx inspect --bootstrap
@@ -104,6 +106,8 @@ steps:
   - name: setup-buildx
     image: docker:24.0.2
     privileged: true
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
     commands:
       - docker buildx create --use
       - docker buildx inspect --bootstrap
@@ -167,6 +171,8 @@ steps:
   - name: setup-buildx
     image: docker:24.0.2
     privileged: true
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
     commands:
       - docker buildx create --use
       - docker buildx inspect --bootstrap
