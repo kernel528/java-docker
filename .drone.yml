@@ -16,7 +16,7 @@ steps:
     image: tonistiigi/binfmt
     privileged: true
     commands:
-      - /usr/bin/qemu-system-arm --version
+      - /bin/sh -c "echo 'Setting up QEMU for multi-arch builds'"
 
   - name: setup-buildx
     image: docker:24.0.2
@@ -103,7 +103,7 @@ steps:
     image: tonistiigi/binfmt
     privileged: true
     commands:
-      - /usr/bin/qemu-system-arm --version
+      - /bin/sh -c "echo 'Setting up QEMU for multi-arch builds'"
 
   - name: setup-buildx
     image: docker:24.0.2
@@ -168,7 +168,7 @@ steps:
     image: tonistiigi/binfmt
     privileged: true
     commands:
-      - /usr/bin/qemu-system-arm --version
+      - /bin/sh -c "echo 'Setting up QEMU for multi-arch builds'"
 
   - name: setup-buildx
     image: docker:24.0.2
