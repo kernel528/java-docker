@@ -19,7 +19,7 @@ steps:
     image: docker:24.0.2
     privileged: true
     environment:
-      DOCKER_HOST: tcp://docker:2375
+      DOCKER_HOST: tcp://localhost:2375
     commands:
       - docker buildx create --use
       - docker buildx inspect --bootstrap
@@ -29,7 +29,7 @@ steps:
     image: plugins/docker
     environment:
       DOCKER_BUILDKIT: 1
-      DOCKER_HOST: tcp://docker:2375
+      DOCKER_HOST: tcp://localhost:2375
     when:
       branch:
         - '21-arm64'
@@ -54,6 +54,9 @@ services:
   - name: docker
     image: docker:dind
     privileged: true
+    network_mode: bridge  # Ensures service is accessible
+    environment:
+      DOCKER_TLS_CERTDIR: ""  # Disables TLS for compatibility
 
 ---
 
@@ -76,7 +79,7 @@ steps:
     image: docker:24.0.2
     privileged: true
     environment:
-      DOCKER_HOST: tcp://docker:2375
+      DOCKER_HOST: tcp://localhost:2375
     commands:
       - docker buildx create --use
       - docker buildx inspect --bootstrap
@@ -99,6 +102,9 @@ services:
   - name: docker
     image: docker:dind
     privileged: true
+    network_mode: bridge  # Ensures service is accessible
+    environment:
+      DOCKER_TLS_CERTDIR: ""  # Disables TLS for compatibility
 
 ---
 
@@ -119,7 +125,7 @@ steps:
     image: docker:24.0.2
     privileged: true
     environment:
-      DOCKER_HOST: tcp://docker:2375
+      DOCKER_HOST: tcp://localhost:2375
     commands:
       - docker buildx create --use
       - docker buildx inspect --bootstrap
@@ -128,7 +134,7 @@ steps:
     image: plugins/docker
     environment:
       DOCKER_BUILDKIT: 1
-      DOCKER_HOST: tcp://docker:2375
+      DOCKER_HOST: tcp://localhost:2375
     when:
       event:
         - tag
@@ -150,3 +156,6 @@ services:
   - name: docker
     image: docker:dind
     privileged: true
+    network_mode: bridge  # Ensures service is accessible
+    environment:
+      DOCKER_TLS_CERTDIR: ""  # Disables TLS for compatibility
