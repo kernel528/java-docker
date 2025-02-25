@@ -20,7 +20,7 @@ steps:
     environment:
       DOCKER_HOST: tcp://docker:2375
     commands:
-      - for i in $(seq 1 10); do docker info && exit 0 || sleep 3; done; exit 1
+      - for i in $(seq 1 10); do docker version && exit 0 || (echo "Waiting for Docker..." && sleep 5); done; exit 1
 
   # Set up Docker Buildx
   - name: setup-buildx
