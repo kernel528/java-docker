@@ -13,7 +13,7 @@ trigger:
 steps:
   # Build JDK image
   - name: setup-qemu
-    image: multiarch/qemu-user-static
+    image: tonistiigi/binfmt
     privileged: true
     commands:
       - /usr/bin/qemu-system-arm --version
@@ -93,7 +93,7 @@ trigger:
 steps:
   # Test JDK Image
   - name: setup-qemu
-    image: multiarch/qemu-user-static
+    image: tonistiigi/binfmt
     privileged: true
     commands:
       - /usr/bin/qemu-system-arm --version
@@ -151,7 +151,7 @@ trigger:
 steps:
   # Build JDK image
   - name: setup-qemu
-    image: multiarch/qemu-user-static
+    image: tonistiigi/binfmt
     privileged: true
     commands:
       - /usr/bin/qemu-system-arm --version
