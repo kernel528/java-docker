@@ -18,7 +18,7 @@ steps:
   - name: wait-for-dind
     image: alpine
     commands:
-      - for i in $(seq 1 10); do nc -z docker 2375 && echo "Docker is ready" && exit 0 || sleep 3; done; exit 1
+      - for i in $(seq 1 10); do nc -z localhost 2375 && echo "Docker is ready" && exit 0 || sleep 3; done; exit 1
 
   # Set up Docker Buildx
   - name: setup-buildx
