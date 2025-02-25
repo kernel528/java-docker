@@ -16,7 +16,7 @@ steps:
     image: multiarch/qemu-user-static
     privileged: true
     commands:
-      - /bin/qemu-system-arm --version
+      - /usr/bin/qemu-system-arm --version
 
   - name: docker-build-jdk
     image: plugins/docker
@@ -96,7 +96,7 @@ steps:
     image: multiarch/qemu-user-static
     privileged: true
     commands:
-      - /bin/qemu-system-arm --version
+      - /usr/bin/qemu-system-arm --version
 
   - name: docker-test-jdk
     image: kernel528/jdk:jdk-latest-arm64
@@ -154,7 +154,7 @@ steps:
     image: multiarch/qemu-user-static
     privileged: true
     commands:
-      - /bin/qemu-system-arm --version
+      - /usr/bin/qemu-system-arm --version
 
   - name: docker-build-jdk
     image: plugins/docker
