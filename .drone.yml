@@ -18,7 +18,7 @@ steps:
   - name: wait-for-dind
     image: docker:24.0.2
     environment:
-      DOCKER_HOST: tcp://docker:2375
+      DOCKER_HOST: tcp://docker:2376
     commands:
       - for i in $(seq 1 10); do docker version && exit 0 || (echo "Waiting for Docker..." && sleep 5); done; exit 1
 
@@ -27,7 +27,7 @@ steps:
     image: docker:24.0.2
     privileged: true
     environment:
-      DOCKER_HOST: tcp://docker:2375  # Use the service name "docker"
+      DOCKER_HOST: tcp://docker:2376  # Use the service name "docker"
     commands:
       - docker buildx create --use
       - docker buildx inspect --bootstrap
@@ -37,7 +37,7 @@ steps:
     image: plugins/docker
     environment:
       DOCKER_BUILDKIT: 1
-      DOCKER_HOST: tcp://docker:2375
+      DOCKER_HOST: tcp://docker:2376
     when:
       branch:
         - '21-arm64'
@@ -89,7 +89,7 @@ steps:
     image: docker:24.0.2
     privileged: true
     environment:
-      DOCKER_HOST: tcp://localhost:2375
+      DOCKER_HOST: tcp://localhost:2376
     commands:
       - docker buildx create --use
       - docker buildx inspect --bootstrap
@@ -135,7 +135,7 @@ steps:
     image: docker:24.0.2
     privileged: true
     environment:
-      DOCKER_HOST: tcp://localhost:2375
+      DOCKER_HOST: tcp://localhost:2376
     commands:
       - docker buildx create --use
       - docker buildx inspect --bootstrap
@@ -144,7 +144,7 @@ steps:
     image: plugins/docker
     environment:
       DOCKER_BUILDKIT: 1
-      DOCKER_HOST: tcp://localhost:2375
+      DOCKER_HOST: tcp://localhost:2376
     when:
       event:
         - tag
