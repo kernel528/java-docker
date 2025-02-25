@@ -100,8 +100,6 @@ services:
 
 ---
 
-### **🔹 `java-image-test` Pipeline**
-  ```yaml
 kind: pipeline
 type: docker
 name: java-image-test
