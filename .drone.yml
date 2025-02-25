@@ -14,12 +14,18 @@ steps:
     image: tonistiigi/binfmt
     privileged: true
 
+  # Wait for Docker Daemon to be Ready
+  - name: wait-for-dind
+    image: alpine
+    commands:
+      - for i in $(seq 1 10); do nc -z docker 2375 && echo "Docker is ready" && exit 0 || sleep 3; done; exit 1
+
   # Set up Docker Buildx
   - name: setup-buildx
     image: docker:24.0.2
     privileged: true
     environment:
-      DOCKER_HOST: tcp://localhost:2375
+      DOCKER_HOST: tcp://docker:2375  # Use service name instead of localhost
     commands:
       - docker buildx create --use
       - docker buildx inspect --bootstrap
@@ -29,7 +35,7 @@ steps:
     image: plugins/docker
     environment:
       DOCKER_BUILDKIT: 1
-      DOCKER_HOST: tcp://localhost:2375
+      DOCKER_HOST: tcp://docker:2375  # Use service name instead of localhost
     when:
       branch:
         - '21-arm64'
@@ -50,11 +56,13 @@ steps:
         - jdk21.0.5-11-arm64
         - jdk21.0.5-11-drone-build-${DRONE_BUILD_NUMBER}-arm64
 
+# 🛠 Services for Docker-in-Docker
 services:
   - name: docker
     image: docker:dind
     privileged: true
-    network_mode: bridge  # Ensures service is accessible
+    volumes:
+      - /var/lib/docker
     environment:
       DOCKER_TLS_CERTDIR: ""  # Disables TLS for compatibility
 
