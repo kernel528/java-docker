@@ -8,3 +8,4 @@
 * v2.0.0 - Updated to kernel528/alpine:3.21.0 base image.
 * v2.0.1 - Updated to kernel528/alpine:3.21.2 base image.
 * v2.0.2 - Updated to kernel528/alpine:3.21.3 base image.
+* v2.1.0 - Updated .drone.yml to support multiarch for arm64 builds on drone-server.
