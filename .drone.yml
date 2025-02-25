@@ -2,7 +2,6 @@ kind: pipeline
 type: docker
 name: java-image-build
 
-# Trigger conditions
 trigger:
   branch:
     - '21-arm64'
@@ -19,6 +18,8 @@ steps:
   - name: setup-buildx
     image: docker:24.0.2
     privileged: true
+    environment:
+      DOCKER_HOST: tcp://docker:2375
     commands:
       - docker buildx create --use
       - docker buildx inspect --bootstrap
@@ -28,6 +29,7 @@ steps:
     image: plugins/docker
     environment:
       DOCKER_BUILDKIT: 1
+      DOCKER_HOST: tcp://docker:2375
     when:
       branch:
         - '21-arm64'
@@ -48,7 +50,6 @@ steps:
         - jdk21.0.5-11-arm64
         - jdk21.0.5-11-drone-build-${DRONE_BUILD_NUMBER}-arm64
 
-# 🛠 Services for Docker-in-Docker
 services:
   - name: docker
     image: docker:dind
@@ -60,7 +61,6 @@ kind: pipeline
 type: docker
 name: java-image-test
 
-# Trigger conditions
 trigger:
   branch:
     - main-arm64
@@ -75,6 +75,8 @@ steps:
   - name: setup-buildx
     image: docker:24.0.2
     privileged: true
+    environment:
+      DOCKER_HOST: tcp://docker:2375
     commands:
       - docker buildx create --use
       - docker buildx inspect --bootstrap
@@ -93,7 +95,6 @@ steps:
       - "javac src/hello-world/HelloWorld.java"
       - "java -classpath src/hello-world HelloWorld"
 
-# 🛠 Services for Docker-in-Docker
 services:
   - name: docker
     image: docker:dind
@@ -117,6 +118,8 @@ steps:
   - name: setup-buildx
     image: docker:24.0.2
     privileged: true
+    environment:
+      DOCKER_HOST: tcp://docker:2375
     commands:
       - docker buildx create --use
       - docker buildx inspect --bootstrap
@@ -125,6 +128,7 @@ steps:
     image: plugins/docker
     environment:
       DOCKER_BUILDKIT: 1
+      DOCKER_HOST: tcp://docker:2375
     when:
       event:
         - tag
