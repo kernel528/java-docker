@@ -19,8 +19,6 @@ steps:
   - name: setup-buildx
     image: docker:24.0.2
     privileged: true
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
     commands:
       - docker buildx create --use
       - docker buildx inspect --bootstrap
@@ -35,8 +33,6 @@ steps:
         - '21-arm64'
       event:
         - push
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
     settings:
       platforms:
         - linux/arm64
@@ -52,51 +48,11 @@ steps:
         - jdk21.0.5-11-arm64
         - jdk21.0.5-11-drone-build-${DRONE_BUILD_NUMBER}-arm64
 
-  # Build JRE Image
-  - name: docker-build-jre
-    image: plugins/docker
-    environment:
-      DOCKER_BUILDKIT: 1
-    when:
-      branch:
-        - '21-arm64'
-      event:
-        - push
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
-    settings:
-      platforms:
-        - linux/arm64
-      username:
-        from_secret: docker_username
-      password:
-        from_secret: docker_password
-      dockerfile: jre/Dockerfile
-      repo: kernel528/jre
-      use_buildx: true
-      tags:
-        - jre-latest-arm64
-        - jre21.0.5-11-arm64
-        - jre21.0.5-11-drone-build-${DRONE_BUILD_NUMBER}-arm64
-
-  # Slack notification
-  - name: slack-notification
-    image: plugins/slack
-    when:
-      status:
-        - failure
-        - success
-    settings:
-      webhook:
-        from_secret: slack_webhook_drone_alerts
-
 # 🛠 Services for Docker-in-Docker
 services:
   - name: docker
     image: docker:dind
     privileged: true
-    commands:
-      - dockerd-entrypoint.sh
 
 ---
 
@@ -119,8 +75,6 @@ steps:
   - name: setup-buildx
     image: docker:24.0.2
     privileged: true
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
     commands:
       - docker buildx create --use
       - docker buildx inspect --bootstrap
@@ -139,38 +93,11 @@ steps:
       - "javac src/hello-world/HelloWorld.java"
       - "java -classpath src/hello-world HelloWorld"
 
-  # Test JRE Image
-  - name: docker-test-jre
-    image: kernel528/jre:jre-latest-arm64
-    when:
-      branch:
-        - main-arm64
-      event:
-        - push
-    commands:
-      - "uname -a"
-      - "cat /etc/os-release"
-      - "java -version"
-      - "java -classpath src/hello-world HelloWorld"
-
-  # Slack notification
-  - name: slack-notification
-    image: plugins/slack
-    when:
-      status:
-        - failure
-        - success
-    settings:
-      webhook:
-        from_secret: slack_webhook_drone_alerts
-
 # 🛠 Services for Docker-in-Docker
 services:
   - name: docker
     image: docker:dind
     privileged: true
-    commands:
-      - dockerd-entrypoint.sh
 
 ---
 
@@ -190,8 +117,6 @@ steps:
   - name: setup-buildx
     image: docker:24.0.2
     privileged: true
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
     commands:
       - docker buildx create --use
       - docker buildx inspect --bootstrap
@@ -203,8 +128,6 @@ steps:
     when:
       event:
         - tag
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
     settings:
       platforms:
         - linux/arm64
@@ -218,44 +141,8 @@ steps:
       tags:
         - jdk-${DRONE_TAG}-arm64
 
-  # Build JRE Image
-  - name: docker-build-jre
-    image: plugins/docker
-    environment:
-      DOCKER_BUILDKIT: 1
-    when:
-      event:
-        - tag
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
-    settings:
-      platforms:
-        - linux/arm64
-      username:
-        from_secret: docker_username
-      password:
-        from_secret: docker_password
-      dockerfile: jre/Dockerfile
-      repo: kernel528/jre
-      use_buildx: true
-      tags:
-        - jre-${DRONE_TAG}-arm64
-
-  # Slack notification
-  - name: slack-notification
-    image: plugins/slack
-    when:
-      status:
-        - failure
-        - success
-    settings:
-      webhook:
-        from_secret: slack_webhook_drone_alerts
-
 # 🛠 Services for Docker-in-Docker
 services:
   - name: docker
     image: docker:dind
     privileged: true
-    commands:
-      - dockerd-entrypoint.sh
