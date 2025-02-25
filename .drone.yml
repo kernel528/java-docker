@@ -9,22 +9,21 @@ trigger:
   event:
     - pull_request
 
-# Build the jdk and jre docker images for arm64 architecture
 steps:
-  # Build JDK image
+  # Enable QEMU for multi-arch builds
   - name: setup-qemu
     image: tonistiigi/binfmt
     privileged: true
 
+  # Set up Docker Buildx
   - name: setup-buildx
     image: docker:24.0.2
     privileged: true
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
     commands:
       - docker buildx create --use
       - docker buildx inspect --bootstrap
 
+  # Build JDK image
   - name: docker-build-jdk
     image: plugins/docker
     environment:
@@ -32,7 +31,7 @@ steps:
     when:
       branch:
         - '21-arm64'
-      when:
+      event:
         - push
     settings:
       platforms:
@@ -43,6 +42,7 @@ steps:
         from_secret: docker_password
       dockerfile: jdk/Dockerfile
       repo: kernel528/jdk
+      use_buildx: true
       tags:
         - jdk-latest-arm64
         - jdk21.0.5-11-arm64
@@ -56,7 +56,7 @@ steps:
     when:
       branch:
         - '21-arm64'
-      when:
+      event:
         - push
     settings:
       platforms:
@@ -67,6 +67,7 @@ steps:
         from_secret: docker_password
       dockerfile: jre/Dockerfile
       repo: kernel528/jre
+      use_buildx: true
       tags:
         - jre-latest-arm64
         - jre21.0.5-11-arm64
@@ -83,6 +84,14 @@ steps:
       webhook:
         from_secret: slack_webhook_drone_alerts
 
+# 🛠 Services for `java-image-build`
+services:
+  - name: docker
+    image: docker:dind
+    privileged: true
+    commands:
+      - dockerd-entrypoint.sh
+
 ---
 
 kind: pipeline
@@ -96,9 +105,7 @@ trigger:
   event:
     - push
 
-# Test java-docker images
 steps:
-  # Test JDK Image
   - name: setup-qemu
     image: tonistiigi/binfmt
     privileged: true
@@ -106,8 +113,6 @@ steps:
   - name: setup-buildx
     image: docker:24.0.2
     privileged: true
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
     commands:
       - docker buildx create --use
       - docker buildx inspect --bootstrap
@@ -117,7 +122,7 @@ steps:
     when:
       branch:
         - main-arm64
-      when:
+      event:
         - push
     commands:
       - "uname -a"
@@ -126,30 +131,13 @@ steps:
       - "javac src/hello-world/HelloWorld.java"
       - "java -classpath src/hello-world HelloWorld"
 
-  # Test JRE Image
-  - name: docker-test-jre
-    image: kernel528/jre:jre-latest-arm64
-    when:
-      branch:
-        - main-arm64
-      when:
-        - push
+# 🛠 Services for `java-image-test`
+services:
+  - name: docker
+    image: docker:dind
+    privileged: true
     commands:
-      - "uname -a"
-      - "cat /etc/os-release"
-      - "java -version"
-      - "java -classpath src/hello-world HelloWorld"
-
-  # Slack notification
-  - name: slack-notification
-    image: plugins/slack
-    when:
-      status:
-        - failure
-        - success
-    settings:
-      webhook:
-        from_secret: slack_webhook_drone_alerts
+      - dockerd-entrypoint.sh
 
 ---
 
@@ -161,9 +149,7 @@ trigger:
   event:
     - tag
 
-# Build the jdk and jre docker images for arm64 architecture
 steps:
-  # Build JDK image
   - name: setup-qemu
     image: tonistiigi/binfmt
     privileged: true
@@ -171,8 +157,6 @@ steps:
   - name: setup-buildx
     image: docker:24.0.2
     privileged: true
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
     commands:
       - docker buildx create --use
       - docker buildx inspect --bootstrap
@@ -193,36 +177,14 @@ steps:
         from_secret: docker_password
       dockerfile: jdk/Dockerfile
       repo: kernel528/jdk
+      use_buildx: true
       tags:
         - jdk-${DRONE_TAG}-arm64
 
-  # Build JRE Image
-  - name: docker-build-jre
-    image: plugins/docker
-    environment:
-      DOCKER_BUILDKIT: 1
-    when:
-      event:
-        - tag
-    settings:
-      platforms:
-        - linux/arm64
-      username:
-        from_secret: docker_username
-      password:
-        from_secret: docker_password
-      dockerfile: jre/Dockerfile
-      repo: kernel528/jre
-      tags:
-        - jre-${DRONE_TAG}-arm64
-
-  # Slack notification
-  - name: slack-notification
-    image: plugins/slack
-    when:
-      status:
-        - failure
-        - success
-    settings:
-      webhook:
-        from_secret: slack_webhook_drone_alerts
+# 🛠 Services for `java-image-tag`
+services:
+  - name: docker
+    image: docker:dind
+    privileged: true
+    commands:
+      - dockerd-entrypoint.sh
