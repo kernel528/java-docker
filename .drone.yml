@@ -2,30 +2,46 @@ kind: pipeline
 type: docker
 name: java-image-build
 
-# Trigger conditions
 trigger:
   branch:
     - '21-arm64'
   event:
     - pull_request
 
-# Build the jdk and jre docker images for arm64 architecture
 steps:
-  # Build JDK image
+  # Enable QEMU for multi-arch builds
   - name: setup-qemu
-    image: multiarch/qemu-user-static
+    image: tonistiigi/binfmt
     privileged: true
-    commands:
-      - /bin/qemu-system-arm --version
 
+  # Wait for Docker Daemon to be Ready
+  - name: wait-for-dind
+    image: docker:24.0.2
+    environment:
+      DOCKER_HOST: tcp://docker:2375
+    commands:
+      - for i in $(seq 1 10); do docker version && exit 0 || (echo "Waiting for Docker..." && sleep 5); done; exit 1
+
+  # Set up Docker Buildx
+  - name: setup-buildx
+    image: docker:24.0.2
+    privileged: true
+    environment:
+      DOCKER_HOST: tcp://docker:2375
+    commands:
+      - docker buildx create --use
+      - docker buildx inspect --bootstrap
+
+  # Build JDK image
   - name: docker-build-jdk
     image: plugins/docker
     environment:
       DOCKER_BUILDKIT: 1
+      DOCKER_HOST: tcp://docker:2375
     when:
       branch:
         - '21-arm64'
-      when:
+      event:
         - push
     settings:
       platforms:
@@ -36,45 +52,21 @@ steps:
         from_secret: docker_password
       dockerfile: jdk/Dockerfile
       repo: kernel528/jdk
+      use_buildx: true
       tags:
         - jdk-latest-arm64
         - jdk21.0.5-11-arm64
         - jdk21.0.5-11-drone-build-${DRONE_BUILD_NUMBER}-arm64
 
-  # Build JRE Image
-  - name: docker-build-jre
-    image: plugins/docker
+# 🛠 Services for Docker-in-Docker
+services:
+  - name: docker
+    image: docker:dind
+    privileged: true
     environment:
-      DOCKER_BUILDKIT: 1
-    when:
-      branch:
-        - '21-arm64'
-      when:
-        - push
-    settings:
-      platforms:
-        - linux/arm64
-      username:
-        from_secret: docker_username
-      password:
-        from_secret: docker_password
-      dockerfile: jre/Dockerfile
-      repo: kernel528/jre
-      tags:
-        - jre-latest-arm64
-        - jre21.0.5-11-arm64
-        - jre21.0.5-11-drone-build-${DRONE_BUILD_NUMBER}-arm64
-
-  # Slack notification
-  - name: slack-notification
-    image: plugins/slack
-    when:
-      status:
-        - failure
-        - success
-    settings:
-      webhook:
-        from_secret: slack_webhook_drone_alerts
+      DOCKER_TLS_CERTDIR: ""  # ✅ Disables TLS so we can connect via 2375
+      DOCKER_DRIVER: overlay2
+      DOCKER_DEBUG: "1"  # Enable debug logging
 
 ---
 
@@ -82,28 +74,32 @@ kind: pipeline
 type: docker
 name: java-image-test
 
-# Trigger conditions
 trigger:
   branch:
     - main-arm64
   event:
     - push
 
-# Test java-docker images
 steps:
-  # Test JDK Image
   - name: setup-qemu
-    image: multiarch/qemu-user-static
+    image: tonistiigi/binfmt
     privileged: true
+
+  - name: setup-buildx
+    image: docker:24.0.2
+    privileged: true
+    environment:
+      DOCKER_HOST: tcp://localhost:2376
     commands:
-      - /bin/qemu-system-arm --version
+      - docker buildx create --use
+      - docker buildx inspect --bootstrap
 
   - name: docker-test-jdk
     image: kernel528/jdk:jdk-latest-arm64
     when:
       branch:
         - main-arm64
-      when:
+      event:
         - push
     commands:
       - "uname -a"
@@ -112,30 +108,13 @@ steps:
       - "javac src/hello-world/HelloWorld.java"
       - "java -classpath src/hello-world HelloWorld"
 
-  # Test JRE Image
-  - name: docker-test-jre
-    image: kernel528/jre:jre-latest-arm64
-    when:
-      branch:
-        - main-arm64
-      when:
-        - push
-    commands:
-      - "uname -a"
-      - "cat /etc/os-release"
-      - "java -version"
-      - "java -classpath src/hello-world HelloWorld"
-
-  # Slack notification
-  - name: slack-notification
-    image: plugins/slack
-    when:
-      status:
-        - failure
-        - success
-    settings:
-      webhook:
-        from_secret: slack_webhook_drone_alerts
+services:
+  - name: docker
+    image: docker:dind
+    privileged: true
+    network_mode: bridge  # Ensures service is accessible
+    environment:
+      DOCKER_TLS_CERTDIR: ""  # Disables TLS for compatibility
 
 ---
 
@@ -147,19 +126,25 @@ trigger:
   event:
     - tag
 
-# Build the jdk and jre docker images for arm64 architecture
 steps:
-  # Build JDK image
   - name: setup-qemu
-    image: multiarch/qemu-user-static
+    image: tonistiigi/binfmt
     privileged: true
+
+  - name: setup-buildx
+    image: docker:24.0.2
+    privileged: true
+    environment:
+      DOCKER_HOST: tcp://localhost:2376
     commands:
-      - /bin/qemu-system-arm --version
+      - docker buildx create --use
+      - docker buildx inspect --bootstrap
 
   - name: docker-build-jdk
     image: plugins/docker
     environment:
       DOCKER_BUILDKIT: 1
+      DOCKER_HOST: tcp://localhost:2376
     when:
       event:
         - tag
@@ -172,36 +157,15 @@ steps:
         from_secret: docker_password
       dockerfile: jdk/Dockerfile
       repo: kernel528/jdk
+      use_buildx: true
       tags:
         - jdk-${DRONE_TAG}-arm64
 
-  # Build JRE Image
-  - name: docker-build-jre
-    image: plugins/docker
+# 🛠 Services for Docker-in-Docker
+services:
+  - name: docker
+    image: docker:dind
+    privileged: true
+    network_mode: bridge  # Ensures service is accessible
     environment:
-      DOCKER_BUILDKIT: 1
-    when:
-      event:
-        - tag
-    settings:
-      platforms:
-        - linux/arm64
-      username:
-        from_secret: docker_username
-      password:
-        from_secret: docker_password
-      dockerfile: jre/Dockerfile
-      repo: kernel528/jre
-      tags:
-        - jre-${DRONE_TAG}-arm64
-
-  # Slack notification
-  - name: slack-notification
-    image: plugins/slack
-    when:
-      status:
-        - failure
-        - success
-    settings:
-      webhook:
-        from_secret: slack_webhook_drone_alerts
+      DOCKER_TLS_CERTDIR: ""  # Disables TLS for compatibility
