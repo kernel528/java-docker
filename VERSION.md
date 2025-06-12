@@ -5,6 +5,7 @@
 * v1.3.0 - Updated with JRE Dockerfile.
 * v1.4.0 - Updated drone builds.
 * v1.5.0 - Updated docker-tests steps to build hello-world java app with JDK and execute with JRE.
-* v2.0.0 - Updated to kernel528/alpine:3.21.0 base image.
-* v2.0.1 - Updated to kernel528/alpine:3.21.2 base image.
-* v2.0.2 - Updated to kernel528/alpine:3.21.3 base image.
+* v21.0.0 - Updated to kernel528/alpine:3.21.0 base image.
+* v21.0.1 - Updated to kernel528/alpine:3.21.2 base image.
+* v21.0.5 - Updated to kernel528/alpine:3.21.3 base image.
+* v23.0.1 - Updated to kernel528/alpine:3.22.0 base image.  Java v23.0.1-11

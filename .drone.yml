@@ -5,7 +5,7 @@ name: java-image-build
 # Trigger conditions
 trigger:
   branch:
-    - '21'
+    - '23'
   event:
     - pull_request
 
@@ -18,7 +18,7 @@ steps:
       DOCKER_BUILDKIT: 1
     when:
       branch:
-        - '21'
+        - '23'
       when:
         - push
     settings:
@@ -32,8 +32,8 @@ steps:
       repo: kernel528/jdk
       tags:
         - jdk-latest
-        - jdk21.0.5-11
-        - jdk21.0.5-11-drone-build-${DRONE_BUILD_NUMBER}
+        - jdk23.0.1-11
+        - jdk23.0.1-11-drone-build-${DRONE_BUILD_NUMBER}
 
   # Build JRE Image
   - name: docker-build-jre
@@ -42,7 +42,7 @@ steps:
       DOCKER_BUILDKIT: 1
     when:
       branch:
-        - '21'
+        - '23'
       when:
         - push
     settings:
@@ -56,8 +56,8 @@ steps:
       repo: kernel528/jre
       tags:
         - jre-latest
-        - jre21.0.5-11
-        - jre21.0.5-11-drone-build-${DRONE_BUILD_NUMBER}
+        - jre23.0.1-11
+        - jre23.0.1-11-drone-build-${DRONE_BUILD_NUMBER}
 
   # Slack notification
   - name: slack-notification
