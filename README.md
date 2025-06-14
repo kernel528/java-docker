@@ -15,8 +15,8 @@ _[![Latest Version](https://img.shields.io/github/v/tag/kernel528/java-docker)](
 ### Comments
 - This image uses the kernel528/alpine as the base image (https://github.com/kernel528/alpine-docker)
 - This repo is based on:
-  - JDK: https://github.com/adoptium/containers/blob/d7a5038edcd8ab08b0babaeae09d0c097453a023/21/jdk/alpine/Dockerfile
-  - JRE: https://github.com/adoptium/containers/blob/d7a5038edcd8ab08b0babaeae09d0c097453a023/21/jre/alpine/Dockerfile
+  - JDK: https://github.com/adoptium/containers/blob/d7a5038edcd8ab08b0babaeae09d0c097453a023/23/jdk/alpine/Dockerfile
+  - JRE: https://github.com/adoptium/containers/blob/d7a5038edcd8ab08b0babaeae09d0c097453a023/23/jre/alpine/Dockerfile
 - The subfolder 11/jdk and 11/jre from above link as the main source for building purposes.
 - Drone is used to automate the build and publish of the docker images.
 
@@ -31,11 +31,11 @@ _[![Latest Version](https://img.shields.io/github/v/tag/kernel528/java-docker)](
 
 ### How To build for JDK
 - Clone this repo.
-- Execute:  ```docker build -t kernel528/jdk:21 -f ./21/jdk/Dockerfile .```
+- Execute:  ```docker build -t kernel528/jdk:23 -f ./21/jdk/Dockerfile .```
 
 ### How To build for JRE
 - Clone this repo.
-- Execute ```docker build -t kernel528/jre:21 -f ./21/jre/Dockerfile .```
+- Execute ```docker build -t kernel528/jre:23 -f ./21/jre/Dockerfile .```
 
 ### Drone Builds
 - This repo uses drone to automatically build images when new code is merged.  Refer to the .drone.yml file for details.  
