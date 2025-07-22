@@ -8,4 +8,5 @@
 * v21.0.0 - Updated to kernel528/alpine:3.21.0 base image.
 * v21.0.1 - Updated to kernel528/alpine:3.21.2 base image.
 * v21.0.5 - Updated to kernel528/alpine:3.21.3 base image.
-* v23.0.1 - Updated to kernel528/alpine:3.22.0 base image.  Java v23.0.1-11
+* v23.0.1 - Updated to kernel528/alpine:3.22.0 base image.  Java v23.0.1+11
+* v23.0.1-3.22.1 - Updated to kernel528/alpine:3.22.1 base image.
