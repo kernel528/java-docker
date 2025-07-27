@@ -51,7 +51,6 @@ RUN set -eux; \
         --no-same-owner; \
     rm -f /tmp/openjdk.tar.gz
 
-# Optional: verify runtime environment
 RUN set -eux; \
     echo "Verifying JRE install..."; \
     java -XshowSettings:properties -version | grep 'file.encoding'; \
