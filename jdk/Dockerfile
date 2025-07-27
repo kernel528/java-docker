@@ -5,8 +5,6 @@ USER root
 
 ENV JAVA_HOME=/opt/java/openjdk
 ENV PATH=$JAVA_HOME/bin:$PATH
-
-# Default to UTF-8 file.encoding
 ENV LANG='en_US.UTF-8' LANGUAGE='en_US:en' LC_ALL='en_US.UTF-8'
 
 RUN set -eux; \
@@ -60,18 +58,15 @@ RUN set -eux; \
     fileEncoding=$(echo 'System.out.println(System.getProperty("file.encoding"));' | jshell --execution local -q | grep -E '^[A-Za-z0-9._-]+$' | tail -n 1); \
     echo "Detected encoding: $fileEncoding"; \
     if [ -z "$fileEncoding" ]; then \
-        echo "Error: fileEncoding not detected"; \
-        exit 1; \
+        echo "Error: fileEncoding not detected"; exit 1; \
     fi; \
     if [ "$fileEncoding" != "UTF-8" ]; then \
-        echo "Unexpected encoding: $fileEncoding"; \
-        exit 1; \
+        echo "Unexpected encoding: $fileEncoding"; exit 1; \
     fi; \
     rm -rf ~/.java; \
     javac --version; \
     java --version; \
     echo "Complete."
-
 
 # Trust download and build option...
 #RUN set -eux; \
