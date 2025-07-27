@@ -57,8 +57,9 @@ RUN set -eux; \
 
 RUN set -eux; \
     echo "Verifying install ..."; \
-    fileEncoding=$(echo 'System.out.println(System.getProperty("file.encoding"));' | jshell --execution local -q | tail -n 1); \
-    [ "$fileEncoding" = 'UTF-8' ]; \
+    fileEncoding=$(echo 'System.out.println(System.getProperty("file.encoding"));' | jshell --execution local -q | grep -E '^[A-Za-z0-9._-]+$' | tail -n 1); \
+    echo "Detected encoding: $fileEncoding"; \
+    [ "$fileEncoding" = "UTF-8" ]; \
     rm -rf ~/.java; \
     javac --version; \
     java --version; \
