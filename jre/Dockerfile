@@ -23,11 +23,11 @@ RUN set -eux; \
     ARCH="$(apk --print-arch)"; \
     case "${ARCH}" in \
        aarch64) \
-         ESUM='7f96e41d86e7b01cc95de3ea9d649c93efbbcb5f80b87e0dc32ae9e403e2cdb9'; \
+         ESUM='b56eaedc094cb9107be2d5be9ad34c3dd9492c45aa671d102b5829a488cfc744'; \
          BINARY_URL='https://github.com/adoptium/temurin23-binaries/releases/download/jdk-23.0.1%2B11/OpenJDK23U-jre_aarch64_alpine-linux_hotspot_23.0.1_11.tar.gz'; \
          ;; \
        x86_64) \
-         ESUM='b87e6575d8a0ebd8f1a02e9c75d83775d2e2a2e5e5e14bcb9cfed6d9496f4221'; \
+         ESUM='38a1b20b5ee8869b20e9f9aefdc91eedf245584d35287842a66540f0745dd3d0'; \
          BINARY_URL='https://github.com/adoptium/temurin23-binaries/releases/download/jdk-23.0.1%2B11/OpenJDK23U-jre_x64_alpine-linux_hotspot_23.0.1_11.tar.gz'; \
          ;; \
        *) \
