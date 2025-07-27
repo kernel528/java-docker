@@ -59,11 +59,28 @@ RUN set -eux; \
     echo "Verifying install ..."; \
     fileEncoding=$(echo 'System.out.println(System.getProperty("file.encoding"));' | jshell --execution local -q | grep -E '^[A-Za-z0-9._-]+$' | tail -n 1); \
     echo "Detected encoding: $fileEncoding"; \
-    [ "$fileEncoding" = "UTF-8" ]; \
+    if [ -z "$fileEncoding" ]; then \
+        echo "Error: fileEncoding not detected"; \
+        exit 1; \
+    fi; \
+    if [ "$fileEncoding" != "UTF-8" ]; then \
+        echo "Unexpected encoding: $fileEncoding"; \
+        exit 1; \
+    fi; \
     rm -rf ~/.java; \
     javac --version; \
     java --version; \
     echo "Complete."
+
+
+# Trust download and build option...
+#RUN set -eux; \
+#    echo "Detected encoding:"; \
+#    echo 'System.out.println(System.getProperty("file.encoding"));' | jshell --execution local -q; \
+#    rm -rf ~/.java; \
+#    javac --version; \
+#    java --version; \
+#    echo "Complete." \
 
 COPY --chmod=755 entrypoint.sh /__cacert_entrypoint.sh
 ENTRYPOINT ["/__cacert_entrypoint.sh"]
