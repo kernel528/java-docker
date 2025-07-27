@@ -53,7 +53,8 @@ RUN set -eux; \
 
 RUN set -eux; \
     echo "Verifying JRE install..."; \
-    java -XshowSettings:properties -version | grep 'file.encoding'; \
+    java -XshowSettings:properties -version > /tmp/java-settings.txt 2>&1 || true; \
+    grep 'file.encoding' /tmp/java-settings.txt; \
     java -version; \
     echo "Complete."
 
