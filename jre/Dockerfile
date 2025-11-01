@@ -1,4 +1,4 @@
-FROM kernel528/alpine:3.22.1.09
+FROM kernel528/alpine:3.22.2
 
 USER root
 

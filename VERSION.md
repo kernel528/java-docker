@@ -11,3 +11,4 @@
 * v23.0.1 - Updated to kernel528/alpine:3.22.0 base image.  Java v23.0.1+11
 * v23.0.1-3.22.1 - Updated to kernel528/alpine:3.22.1 base image.
 * v23.0.1-3.22.1.09 - Updated to kernel528/alpine:3.22.1.09 base image.
+* v23.0.1-3.22.2 - Updated base image kernel528/alpine:3.22.2.
