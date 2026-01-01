@@ -15,9 +15,9 @@ _[![Latest Version](https://img.shields.io/github/v/tag/kernel528/java-docker)](
 ### Comments
 - This image uses the kernel528/alpine as the base image (https://github.com/kernel528/alpine-docker)
 - This repo is based on:
-  - JDK: https://github.com/adoptium/containers/blob/d7a5038edcd8ab08b0babaeae09d0c097453a023/23/jdk/alpine/Dockerfile
-  - JRE: https://github.com/adoptium/containers/blob/d7a5038edcd8ab08b0babaeae09d0c097453a023/23/jre/alpine/Dockerfile
-- The subfolder 11/jdk and 11/jre from above link as the main source for building purposes.
+  - JDK: https://github.com/adoptium/containers/blob/main/25/jdk/alpine/3.23/Dockerfile
+  - JRE: https://github.com/adoptium/containers/blob/main/25/jre/alpine/3.23/Dockerfile
+- The subfolder 25/jdk/alpine and 25/jre/alpine from above link as the main source for building purposes.
 - Drone is used to automate the build and publish of the docker images.
 
 ### How to Update
