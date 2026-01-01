@@ -75,7 +75,7 @@ if [ -n "$USE_SYSTEM_CA_CERTS" ]; then
             # Extract the Common Name (CN) and Serial Number from the certificate
             CN=$(openssl x509 -in "$crt" -noout -subject -nameopt -space_eq | sed -n 's/^.*CN=\([^,]*\).*$/\1/p')
             SERIAL=$(openssl x509 -in "$crt" -noout -serial | sed -n 's/^serial=\(.*\)$/\1/p')
-
+            
             # Check if an alias with the CN already exists in the keystore
             ALIAS=$CN
             if keytool -list -keystore "$JRE_CACERTS_PATH" -storepass changeit -alias "$ALIAS" >/dev/null 2>&1; then
