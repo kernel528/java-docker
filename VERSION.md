@@ -12,3 +12,4 @@
 * v23.0.1-3.22.1 - Updated to kernel528/alpine:3.22.1 base image.
 * v23.0.1-3.22.1.09 - Updated to kernel528/alpine:3.22.1.09 base image.
 * v23.0.1-3.22.2 - Updated base image kernel528/alpine:3.22.2.
+* v25.0.1-8_3.23.2 - Updated base image to kernel528/alpine:3.23.2 and adoptium/containers v25

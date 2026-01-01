@@ -1,64 +1,73 @@
-FROM kernel528/alpine:3.22.2
+FROM kernel528/alpine:3.23.2
 
 USER root
 
 ENV JAVA_HOME=/opt/java/openjdk
 ENV PATH=$JAVA_HOME/bin:$PATH
+
+# Default to UTF-8 file.encoding
 ENV LANG='en_US.UTF-8' LANGUAGE='en_US:en' LC_ALL='en_US.UTF-8'
 
 RUN set -eux; \
     apk add --no-cache \
+        # java.lang.UnsatisfiedLinkError: libfontmanager.so: libfreetype.so.6: cannot open shared object file: No such file or directory
+        # java.lang.NoClassDefFoundError: Could not initialize class sun.awt.X11FontManager
+        # https://github.com/docker-library/openjdk/pull/235#issuecomment-424466077
         fontconfig ttf-dejavu \
-        gnupg \
+        # utilities for keeping Alpine and OpenJDK CA certificates in sync
+        # https://github.com/adoptium/containers/issues/293
         ca-certificates p11-kit-trust \
+        # locales ensures proper character encoding and locale-specific behaviors using en_US.UTF-8
         musl-locales musl-locales-lang \
         tzdata \
+        # Contains `csplit` used for splitting multiple certificates in one file to multiple files, since keytool can
+        # only import one at a time.
         coreutils \
-        openssl; \
+        # Needed to extract CN and generate aliases for certificates
+        openssl \
+    ; \
     rm -rf /var/cache/apk/*
 
-ENV JAVA_VERSION=jre-23.0.1+11
+ENV JAVA_VERSION=jdk-25.0.1+8
 
 RUN set -eux; \
     ARCH="$(apk --print-arch)"; \
     case "${ARCH}" in \
        aarch64) \
-         ESUM='b56eaedc094cb9107be2d5be9ad34c3dd9492c45aa671d102b5829a488cfc744'; \
-         BINARY_URL='https://github.com/adoptium/temurin23-binaries/releases/download/jdk-23.0.1%2B11/OpenJDK23U-jre_aarch64_alpine-linux_hotspot_23.0.1_11.tar.gz'; \
+         ESUM='0176d4b18047ce6669c451e7293998961340a6720e979adfbfefb7356d21d597'; \
+         BINARY_URL='https://github.com/adoptium/temurin25-binaries/releases/download/jdk-25.0.1%2B8/OpenJDK25U-jre_aarch64_alpine-linux_hotspot_25.0.1_8.tar.gz'; \
          ;; \
        x86_64) \
-         ESUM='38a1b20b5ee8869b20e9f9aefdc91eedf245584d35287842a66540f0745dd3d0'; \
-         BINARY_URL='https://github.com/adoptium/temurin23-binaries/releases/download/jdk-23.0.1%2B11/OpenJDK23U-jre_x64_alpine-linux_hotspot_23.0.1_11.tar.gz'; \
+         ESUM='46a7eca285957dadb0adacd96fe385bc5512f31b7f90a3dd01f04679d614a420'; \
+         BINARY_URL='https://github.com/adoptium/temurin25-binaries/releases/download/jdk-25.0.1%2B8/OpenJDK25U-jre_x64_alpine-linux_hotspot_25.0.1_8.tar.gz'; \
          ;; \
        *) \
          echo "Unsupported arch: ${ARCH}"; \
          exit 1; \
          ;; \
     esac; \
-    wget -O /tmp/openjdk.tar.gz "${BINARY_URL}"; \
-    wget -O /tmp/openjdk.tar.gz.sig "${BINARY_URL}.sig"; \
+    apk add --no-cache --virtual .fetch-deps gnupg; \
+    wget -O /tmp/openjdk.tar.gz ${BINARY_URL}; \
+    wget -O /tmp/openjdk.tar.gz.sig ${BINARY_URL}.sig; \
     export GNUPGHOME="$(mktemp -d)"; \
+    # gpg: key 843C48A565F8F04B: "Adoptium GPG Key (DEB/RPM Signing Key) <temurin-dev@eclipse.org>" imported
     gpg --batch --keyserver keyserver.ubuntu.com --recv-keys 3B04D753C9050D9A5D343F39843C48A565F8F04B; \
     gpg --batch --verify /tmp/openjdk.tar.gz.sig /tmp/openjdk.tar.gz; \
-    rm -f /tmp/openjdk.tar.gz.sig; \
-    rm -rf "$GNUPGHOME" || true; \
+    rm -rf "${GNUPGHOME}" /tmp/openjdk.tar.gz.sig; \
     echo "${ESUM} */tmp/openjdk.tar.gz" | sha256sum -c -; \
     mkdir -p "$JAVA_HOME"; \
     tar --extract \
         --file /tmp/openjdk.tar.gz \
         --directory "$JAVA_HOME" \
         --strip-components 1 \
-        --no-same-owner; \
-    rm -f /tmp/openjdk.tar.gz
+        --no-same-owner \
+    ; \
+    rm -f /tmp/openjdk.tar.gz; \
+    apk del --no-network .fetch-deps;
 
 RUN set -eux; \
-    echo "Verifying JRE install..."; \
-    java -XshowSettings:properties -version > /tmp/java-settings.txt 2>&1 || true; \
-    grep 'file.encoding' /tmp/java-settings.txt; \
-    java -version; \
+    echo "Verifying install ..."; \
+    echo "java --version"; java --version; \
     echo "Complete."
-
 COPY --chmod=755 entrypoint.sh /__cacert_entrypoint.sh
 ENTRYPOINT ["/__cacert_entrypoint.sh"]
-
-CMD ["java"]

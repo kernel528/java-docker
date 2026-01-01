@@ -1,4 +1,3 @@
-
 #!/usr/bin/env sh
 # ------------------------------------------------------------------------------
 #             NOTE: THIS FILE IS GENERATED VIA "generate_dockerfiles.py"
