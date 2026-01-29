@@ -1,5 +1,5 @@
-_[![Build Status](http://drone.kernelsanders.biz:8080/api/badges/kernel528/java-docker/status.svg)](http://drone.kernelsanders.biz:8080/kernel528/java-docker)_
-_[![Latest Version](https://img.shields.io/github/v/tag/kernel528/java-docker)](https://github.com/kernel528/java-docker/releases/latest)_
+[![Build Status](http://drone.kernelsanders.biz:8080/api/badges/kernel528/java-docker/status.svg)](http://drone.kernelsanders.biz:8080/kernel528/java-docker)
+[![Latest Version](https://img.shields.io/github/v/tag/kernel528/java-docker)](https://github.com/kernel528/java-docker/releases/latest)
 [![Docker Image Version (latest jdk semver)](https://img.shields.io/docker/v/kernel528/jdk?sort=semver)](https://hub.docker.com/r/kernel528/jdk)
 [![Docker Image Size (tag)](https://img.shields.io/docker/image-size/kernel528/jdk/jdk-latest)](https://hub.docker.com/r/kernel528/jdk/jdk-latest)
 [![Docker Image Version (latest jre semver)](https://img.shields.io/docker/v/kernel528/jre?sort=semver)](https://hub.docker.com/r/kernel528/jre)
@@ -7,42 +7,58 @@ _[![Latest Version](https://img.shields.io/github/v/tag/kernel528/java-docker)](
 
 
 # Java Docker
-### Source repo to build the JDK and JRE docker images.
-- These can be called as such:
-  - JDK:  kernel528/jdk:jdk-latest
-  - JRE:  kernel528/jre:jre-latest
+Source repo to build the JDK and JRE images.
 
-### Comments
-- This image uses the kernel528/alpine as the base image (https://github.com/kernel528/alpine-docker)
-- This repo is based on:
+## Tags
+- JDK: `kernel528/jdk:jdk-latest` (latest published build)
+- JRE: `kernel528/jre:jre-latest`
+- Versioned tags are also published (see `.drone.yml` and `VERSION.md`).
+
+## Overview
+- Base image: `kernel528/alpine` (https://github.com/kernel528/alpine-docker)
+- Upstream reference:
   - JDK: https://github.com/adoptium/containers/blob/main/25/jdk/alpine/3.23/Dockerfile
   - JRE: https://github.com/adoptium/containers/blob/main/25/jre/alpine/3.23/Dockerfile
-- The subfolder 25/jdk/alpine and 25/jre/alpine from above link as the main source for building purposes.
-- Drone is used to automate the build and publish of the docker images.
+- The Adoptium alpine Dockerfiles are the primary source for updates.
+- Drone builds and publishes images on merge/tag events.
 
-### How to Update
-- Review the available version from the Alpine Linux package site:  
-  - Perform a search using:  openjdk*
-- If a new version exists, then update the following variables in the respective Dockerfile:
-    ```
-    JAVA_VERSION
-    JAVA_ALPINE_VERSION
-    ```
+## Build
+```
+docker build -t kernel528/jdk:jdk-latest -f jdk/Dockerfile .
+docker build -t kernel528/jre:jre-latest -f jre/Dockerfile .
+```
 
-### How To build for JDK
-- Clone this repo.
-- Execute:  ```docker build -t kernel528/jdk:23 -f ./21/jdk/Dockerfile .```
+## CI tags
+Drone publishes tags like:
+- `jdk25.0.1-8`, `jdk25.0.1-8-drone-build-<build>`
+- `jre25.0.1-8`, `jre25.0.1-8-drone-build-<build>`
 
-### How To build for JRE
-- Clone this repo.
-- Execute ```docker build -t kernel528/jre:23 -f ./21/jre/Dockerfile .```
+Source of truth: `.drone.yml`. To list current tags quickly:
+```
+rg -n "tags:" -n .drone.yml -A 6
+```
+Or use the helper script:
+```
+./scripts/list-ci-tags.sh
+```
 
-### Drone Builds
-- This repo uses drone to automatically build images when new code is merged.  Refer to the .drone.yml file for details.  
-- There are several tags used to differentiate builds.  Refer to the .drone.yml file for details.
+## Update process
+- Check for new Temurin/Adoptium releases for alpine.
+- Update these in `jdk/Dockerfile` and `jre/Dockerfile`:
+  - `JAVA_VERSION`
+  - download `BINARY_URL` and `ESUM` values
+- If the base image changes, update `FROM kernel528/alpine:<tag>` in both Dockerfiles.
+- Keep `.drone.yml`, `README.md`, and `VERSION.md` aligned with the new tags.
 
-### How to use
-- These images are foundational to any java apps which require JRE or JDK to run.  If you need the full library set, then use the JDK version.  Example:
+Current base image: `kernel528/alpine:3.23.3`.
+
+## CA certificates
+- Set `USE_SYSTEM_CA_CERTS=1` to import system and custom certs at startup.
+- Mount additional certs to `/certificates/*.crt` when needed.
+- `entrypoint.sh` is generated upstream; avoid editing it directly.
+
+## How to use
+These images are foundational to Java apps. Use the JDK image if you need compiler/tools. Example:
 ```
         FROM kernel528/jre:latest
 
@@ -56,5 +72,5 @@ _[![Latest Version](https://img.shields.io/github/v/tag/kernel528/java-docker)](
         ENTRYPOINT [ "sh", "-c", "java $JAVA_OPTS -Djava.security.egd=file:/dev/./urandom -jar /tmp/$JARFILE" ]
 ```
 
-### Authors
+## Authors
 * **kernel528** - (kernel528@gmail.com)

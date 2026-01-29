@@ -1,4 +1,4 @@
-FROM kernel528/alpine:3.23.2
+FROM kernel528/alpine:3.23.3
 
 # Set to root user to install packages
 USER root
