@@ -25,13 +25,15 @@ Source repo to build the JDK and JRE images.
 ## Build
 ```
 docker build -t kernel528/jdk:jdk-latest -f jdk/Dockerfile .
+docker build -t kernel528/jdk:jdk25.0.2-10_3.23.3 -f jdk/Dockerfile .
 docker build -t kernel528/jre:jre-latest -f jre/Dockerfile .
+docker build -t kernel528/jre:jre25.0.2-10_3.23.3 -f jre/Dockerfile .
 ```
 
 ## CI tags
 Drone publishes tags like:
-- `jdk25.0.1-8`, `jdk25.0.1-8-drone-build-<build>`
-- `jre25.0.1-8`, `jre25.0.1-8-drone-build-<build>`
+- `jdk25.0.2-10_3.23.3`, `jdk25.0.2-10_3.23.3-drone-build-<build>`
+- `jre25.0.2-10_3.23.3`, `jre25.0.2-10_3.23.3-drone-build-<build>`
 
 Source of truth: `.drone.yml`. To list current tags quickly:
 ```
