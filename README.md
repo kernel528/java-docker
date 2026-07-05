@@ -17,23 +17,23 @@ Source repo to build the JDK and JRE images.
 ## Overview
 - Base image: `kernel528/alpine` (https://github.com/kernel528/alpine-docker)
 - Upstream reference:
-  - JDK: https://github.com/adoptium/containers/blob/main/25/jdk/alpine/3.23/Dockerfile
-  - JRE: https://github.com/adoptium/containers/blob/main/25/jre/alpine/3.23/Dockerfile
+  - JDK: https://github.com/adoptium/containers/blob/main/25/jdk/alpine/3.24/Dockerfile
+  - JRE: https://github.com/adoptium/containers/blob/main/25/jre/alpine/3.24/Dockerfile
 - The Adoptium alpine Dockerfiles are the primary source for updates.
 - Drone builds and publishes images on merge/tag events.
 
 ## Build
 ```
 docker build -t kernel528/jdk:jdk-latest -f jdk/Dockerfile .
-docker build -t kernel528/jdk:jdk25.0.2-10_3.23.3 -f jdk/Dockerfile .
+docker build -t kernel528/jdk:jdk25.0.3-9_3.24.1 -f jdk/Dockerfile .
 docker build -t kernel528/jre:jre-latest -f jre/Dockerfile .
-docker build -t kernel528/jre:jre25.0.2-10_3.23.3 -f jre/Dockerfile .
+docker build -t kernel528/jre:jre25.0.3-9_3.24.1 -f jre/Dockerfile .
 ```
 
 ## CI tags
 Drone publishes tags like:
-- `jdk25.0.2-10_3.23.3`, `jdk25.0.2-10_3.23.3-drone-build-<build>`
-- `jre25.0.2-10_3.23.3`, `jre25.0.2-10_3.23.3-drone-build-<build>`
+- `jdk25.0.3-9_3.24.1`, `jdk25.0.3-9_3.24.1-drone-build-<build>`
+- `jre25.0.3-9_3.24.1`, `jre25.0.3-9_3.24.1-drone-build-<build>`
 
 Source of truth: `.drone.yml`. To list current tags quickly:
 ```
@@ -52,7 +52,7 @@ Or use the helper script:
 - If the base image changes, update `FROM kernel528/alpine:<tag>` in both Dockerfiles.
 - Keep `.drone.yml`, `README.md`, and `VERSION.md` aligned with the new tags.
 
-Current base image: `kernel528/alpine:3.23.3`.
+Current base image: `kernel528/alpine:3.24.1`.
 
 ## CA certificates
 - Set `USE_SYSTEM_CA_CERTS=1` to import system and custom certs at startup.
