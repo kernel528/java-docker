@@ -6,6 +6,10 @@
 version: 2
 updates:
   - package-ecosystem: "docker" # See documentation for possible values
-    directory: "/" # Location of package manifests
+    directory: "/jdk" # Location of package manifests
     schedule:
-      interval: "weekly"
+      interval: "monthly"
+  - package-ecosystem: "docker" # See documentation for possible values
+    directory: "/jre" # Location of package manifests
+    schedule:
+      interval: "monthly"
