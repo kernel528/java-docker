@@ -20,3 +20,4 @@ Notes:
 - v25.0.1-8_3.23.3: Base image update to kernel528/alpine:3.23.3.
 - v25.0.2-10_3.23.3: Updated to Temurin 25.0.2+10 on kernel528/alpine:3.23.3.
 - v25.0.3-9_3.24.1: Updated to Temurin 25.0.3+9 on kernel528/alpine:3.24.1.
+- v25.0.3-9_3.24.1_1: Rebuilt Temurin 25.0.3+9 on kernel528/alpine:3.24.1_1.
