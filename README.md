@@ -22,6 +22,10 @@ Source repo to build the JDK and JRE images.
 - The Adoptium alpine Dockerfiles are the primary source for updates.
 - Drone builds and publishes images on merge/tag events.
 
+## Repository Relationships and Refresh Policy
+
+This independent repository is coordinated by [`docker-workspace`](https://github.com/kernel528/docker-workspace). Both the JDK and JRE Dockerfiles directly use `kernel528/alpine`; neither image is built from the other. Publish the Alpine tag first, update both Dockerfiles together, validate compilation with the JDK and execution with the JRE, then publish immutable JDK and JRE tags. Update [`docker-swarm`](https://github.com/kernel528/docker-swarm) only where a stack explicitly consumes those tags.
+
 ## Build
 ```
 docker build -t kernel528/jdk:jdk-latest -f jdk/Dockerfile .
@@ -62,7 +66,7 @@ Current base image: `kernel528/alpine:3.24.1_1`.
 ## How to use
 These images are foundational to Java apps. Use the JDK image if you need compiler/tools. Example:
 ```
-        FROM kernel528/jre:latest
+        FROM kernel528/jre:jre25.0.3-9_3.24.1_1
 
         ENV JARFILE app.jar
 
