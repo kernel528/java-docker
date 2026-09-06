@@ -16,6 +16,11 @@ steps:
     image: plugins/docker
     environment:
       DOCKER_BUILDKIT: 1
+    when:
+      branch:
+        - '25'
+      when:
+        - push
     settings:
       platforms:
         - linux/amd64
@@ -26,14 +31,20 @@ steps:
       dockerfile: jdk/Dockerfile
       repo: kernel528/jdk
       tags:
-        - jdk-pr-${DRONE_PULL_REQUEST}-build-${DRONE_BUILD_NUMBER}
-      dry_run: true
+        - jdk-latest
+        - jdk25.0.3-9_3.24.1_1
+        - jdk25.0.3-9_3.24.1_1-drone-build-${DRONE_BUILD_NUMBER}
 
   # Build JRE Image
   - name: docker-build-jre
     image: plugins/docker
     environment:
       DOCKER_BUILDKIT: 1
+    when:
+      branch:
+        - '25'
+      when:
+        - push
     settings:
       platforms:
         - linux/amd64
@@ -44,8 +55,64 @@ steps:
       dockerfile: jre/Dockerfile
       repo: kernel528/jre
       tags:
-        - jre-pr-${DRONE_PULL_REQUEST}-build-${DRONE_BUILD_NUMBER}
-      dry_run: true
+        - jre-latest
+        - jre25.0.3-9_3.24.1_1
+        - jre25.0.3-9_3.24.1_1-drone-build-${DRONE_BUILD_NUMBER}
+
+  # Slack notification
+  - name: slack-notification
+    image: plugins/slack
+    when:
+      status:
+        - failure
+        - success
+    settings:
+      webhook:
+        from_secret: slack_webhook_drone_alerts
+
+---
+
+kind: pipeline
+type: docker
+name: java-image-test
+
+# Trigger conditions
+trigger:
+  branch:
+    - main
+  event:
+    - push
+
+# Test java-docker images
+steps:
+  # Test JDK Image
+  - name: docker-test-jdk
+    image: kernel528/jdk:jdk-latest
+    when:
+      branch:
+        - main
+      when:
+        - push
+    commands:
+      - "uname -a"
+      - "cat /etc/os-release"
+      - "java -version"
+      - "javac src/hello-world/HelloWorld.java"
+      - "java -classpath src/hello-world HelloWorld"
+
+  # Test JRE Image
+  - name: docker-test-jre
+    image: kernel528/jre:jre-latest
+    when:
+      branch:
+        - main
+      when:
+        - push
+    commands:
+      - "uname -a"
+      - "cat /etc/os-release"
+      - "java -version"
+      - "java -classpath src/hello-world HelloWorld"
 
   # Slack notification
   - name: slack-notification
