@@ -22,3 +22,4 @@ Notes:
 - v25.0.3-9_3.24.1: Updated to Temurin 25.0.3+9 on kernel528/alpine:3.24.1.
 - v25.0.3-9_3.24.1_1: Rebuilt Temurin 25.0.3+9 on kernel528/alpine:3.24.1_1.
 - v25.0.3-9_3.24.3_1: Rebuilt Temurin 25.0.3+9 on kernel528/alpine:3.24.3_1.
+- v25.0.4.1-1_3.24.3_1: Updated to Temurin 25.0.4.1+1 on kernel528/alpine:3.24.3_1.
