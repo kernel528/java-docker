@@ -1,4 +1,4 @@
-[![Build Status](http://drone.kernelsanders.biz:8080/api/badges/kernel528/java-docker/status.svg)](http://drone.kernelsanders.biz:8080/kernel528/java-docker)
+[![Build Status](https://drone.kernelsanders.biz:8443/api/badges/kernel528/java-docker/status.svg)](https://drone.kernelsanders.biz:8443/kernel528/java-docker)
 [![Latest Version](https://img.shields.io/github/v/tag/kernel528/java-docker)](https://github.com/kernel528/java-docker/releases/latest)
 [![Docker Image Version (latest jdk semver)](https://img.shields.io/docker/v/kernel528/jdk?sort=semver)](https://hub.docker.com/r/kernel528/jdk)
 [![Docker Image Size (tag)](https://img.shields.io/docker/image-size/kernel528/jdk/jdk-latest)](https://hub.docker.com/r/kernel528/jdk/jdk-latest)
