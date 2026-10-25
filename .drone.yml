@@ -9,7 +9,8 @@ trigger:
   event:
     - pull_request
 
-# Build the jdk and jre docker images for amd64 architecture
+# Build and validate the jdk and jre images in the consolidated Docker Hub repository.
+# Keep the existing JDK/JRE tag prefixes so consumers can distinguish the image types.
 steps:
   # Build JDK image
   - name: docker-build-jdk
@@ -29,7 +30,7 @@ steps:
       password:
         from_secret: docker_password
       dockerfile: jdk/Dockerfile
-      repo: kernel528/jdk
+      repo: kernel528/java
       tags:
         - jdk-latest
         - jdk25.0.4.1-1_3.24.3_1
@@ -53,7 +54,7 @@ steps:
       password:
         from_secret: docker_password
       dockerfile: jre/Dockerfile
-      repo: kernel528/jre
+      repo: kernel528/java
       tags:
         - jre-latest
         - jre25.0.4.1-1_3.24.3_1
@@ -87,7 +88,7 @@ trigger:
 steps:
   # Test JDK Image
   - name: docker-test-jdk
-    image: kernel528/jdk:jdk-latest
+    image: kernel528/java:jdk-latest
     when:
       branch:
         - main
@@ -102,7 +103,7 @@ steps:
 
   # Test JRE Image
   - name: docker-test-jre
-    image: kernel528/jre:jre-latest
+    image: kernel528/java:jre-latest
     when:
       branch:
         - main
@@ -153,9 +154,9 @@ steps:
       password:
         from_secret: docker_password
       dockerfile: jdk/Dockerfile
-      repo: kernel528/jdk
+      repo: kernel528/java
       tags:
-        - jdk-${DRONE_TAG}
+        - jdk${DRONE_TAG}
 
   # Build JRE Image
   - name: docker-build-jre
@@ -173,9 +174,9 @@ steps:
       password:
         from_secret: docker_password
       dockerfile: jre/Dockerfile
-      repo: kernel528/jre
+      repo: kernel528/java
       tags:
-        - jre-${DRONE_TAG}
+        - jre${DRONE_TAG}
 
   # Slack notification
   - name: slack-notification
