@@ -1,17 +1,17 @@
 [![Build Status](https://drone.kernelsanders.biz:8443/api/badges/kernel528/java-docker/status.svg)](https://drone.kernelsanders.biz:8443/kernel528/java-docker)
 [![Latest Version](https://img.shields.io/github/v/tag/kernel528/java-docker)](https://github.com/kernel528/java-docker/releases/latest)
-[![Docker Image Version (latest jdk semver)](https://img.shields.io/docker/v/kernel528/jdk?sort=semver)](https://hub.docker.com/r/kernel528/jdk)
-[![Docker Image Size (tag)](https://img.shields.io/docker/image-size/kernel528/jdk/jdk-latest)](https://hub.docker.com/r/kernel528/jdk/jdk-latest)
-[![Docker Image Version (latest jre semver)](https://img.shields.io/docker/v/kernel528/jre?sort=semver)](https://hub.docker.com/r/kernel528/jre)
-[![Docker Image Size (tag)](https://img.shields.io/docker/image-size/kernel528/jre/jre-latest)](https://hub.docker.com/r/kernel528/jre/jre-latest)
+[![Docker Image Version (latest jdk semver)](https://img.shields.io/docker/v/kernel528/java?sort=semver&label=JDK)](https://hub.docker.com/r/kernel528/java)
+[![Docker Image Size (tag)](https://img.shields.io/docker/image-size/kernel528/java/jdk-latest)](https://hub.docker.com/r/kernel528/java/jdk-latest)
+[![Docker Image Version (latest jre semver)](https://img.shields.io/docker/v/kernel528/java?sort=semver&label=JRE)](https://hub.docker.com/r/kernel528/java)
+[![Docker Image Size (tag)](https://img.shields.io/docker/image-size/kernel528/java/jre-latest)](https://hub.docker.com/r/kernel528/java/jre-latest)
 
 
 # Java Docker
 Source repo to build the JDK and JRE images.
 
 ## Tags
-- JDK: `kernel528/jdk:jdk-latest` (latest published build)
-- JRE: `kernel528/jre:jre-latest`
+- JDK: `kernel528/java:jdk-latest` (latest published build)
+- JRE: `kernel528/java:jre-latest`
 - Versioned tags are also published (see `.drone.yml` and `VERSION.md`).
 
 ## Overview
@@ -28,10 +28,10 @@ This independent repository is coordinated by [`docker-workspace`](https://githu
 
 ## Build
 ```
-docker build -t kernel528/jdk:jdk-latest -f jdk/Dockerfile .
-docker build -t kernel528/jdk:jdk25.0.4.1-1_3.24.3_1 -f jdk/Dockerfile .
-docker build -t kernel528/jre:jre-latest -f jre/Dockerfile .
-docker build -t kernel528/jre:jre25.0.4.1-1_3.24.3_1 -f jre/Dockerfile .
+docker build -t kernel528/java:jdk-latest -f jdk/Dockerfile .
+docker build -t kernel528/java:jdk25.0.4.1-1_3.24.3_1 -f jdk/Dockerfile .
+docker build -t kernel528/java:jre-latest -f jre/Dockerfile .
+docker build -t kernel528/java:jre25.0.4.1-1_3.24.3_1 -f jre/Dockerfile .
 ```
 
 ## CI tags
@@ -66,7 +66,7 @@ Current base image: `kernel528/alpine:3.24.3_1`.
 ## How to use
 These images are foundational to Java apps. Use the JDK image if you need compiler/tools. Example:
 ```
-        FROM kernel528/jre:jre25.0.4.1-1_3.24.3_1
+        FROM kernel528/java:jre25.0.4.1-1_3.24.3_1
 
         ENV JARFILE app.jar
 

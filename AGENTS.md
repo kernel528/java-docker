@@ -10,16 +10,16 @@
 ## Build, Test, and Development Commands
 - Build JDK:
   ```sh
-  docker build -t kernel528/jdk:jdk-latest -f jdk/Dockerfile .
+  docker build -t kernel528/java:jdk-latest -f jdk/Dockerfile .
   ```
 - Build JRE:
   ```sh
-  docker build -t kernel528/jre:jre-latest -f jre/Dockerfile .
+  docker build -t kernel528/java:jre-latest -f jre/Dockerfile .
   ```
 - Local smoke test:
   ```sh
-  docker run --rm kernel528/jdk:jdk-latest java -version
-  docker run --rm kernel528/jre:jre-latest java -version
+  docker run --rm kernel528/java:jdk-latest java -version
+  docker run --rm kernel528/java:jre-latest java -version
   ```
 
 ## Coding Style & Naming Conventions
