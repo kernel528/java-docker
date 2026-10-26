@@ -1,4 +1,4 @@
-FROM kernel528/alpine:3.24.3_1
+FROM kernel528/alpine:3.24.3_3
 
 USER root
 
@@ -51,9 +51,13 @@ RUN set -eux; \
     wget -O /tmp/openjdk.tar.gz.sig ${BINARY_URL}.sig; \
     export GNUPGHOME="$(mktemp -d)"; \
     # gpg: key 843C48A565F8F04B: "Adoptium GPG Key (DEB/RPM Signing Key) <temurin-dev@eclipse.org>" imported
-    gpg --batch --keyserver keyserver.ubuntu.com --recv-keys 3B04D753C9050D9A5D343F39843C48A565F8F04B; \
+    ADOPTIUM_KEY_FINGERPRINT='3B04D753C9050D9A5D343F39843C48A565F8F04B'; \
+    wget -O /tmp/adoptium-key.asc "https://keyserver.ubuntu.com/pks/lookup?op=get&search=0x${ADOPTIUM_KEY_FINGERPRINT}"; \
+    gpg --batch --import /tmp/adoptium-key.asc; \
+    ACTUAL_KEY_FINGERPRINT="$(gpg --batch --with-colons --fingerprint 843C48A565F8F04B | awk -F: '$1 == "fpr" { print $10; exit }')"; \
+    [ "$ACTUAL_KEY_FINGERPRINT" = "$ADOPTIUM_KEY_FINGERPRINT" ]; \
     gpg --batch --verify /tmp/openjdk.tar.gz.sig /tmp/openjdk.tar.gz; \
-    rm -rf "${GNUPGHOME}" /tmp/openjdk.tar.gz.sig; \
+    rm -rf "${GNUPGHOME}" /tmp/openjdk.tar.gz.sig /tmp/adoptium-key.asc; \
     echo "${ESUM} */tmp/openjdk.tar.gz" | sha256sum -c -; \
     mkdir -p "$JAVA_HOME"; \
     tar --extract \

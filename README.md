@@ -26,18 +26,27 @@ Source repo to build the JDK and JRE images.
 
 This independent repository is coordinated by [`docker-workspace`](https://github.com/kernel528/docker-workspace). Both the JDK and JRE Dockerfiles directly use `kernel528/alpine`; neither image is built from the other. Publish the Alpine tag first, update both Dockerfiles together, validate compilation with the JDK and execution with the JRE, then publish immutable JDK and JRE tags. Update [`docker-swarm`](https://github.com/kernel528/docker-swarm) only where a stack explicitly consumes those tags.
 
+## CI validation and release policy
+
+- Pull requests targeting `25` run rootless exact-image checks for both JDK and JRE; the job receives no registry credentials and publishes nothing.
+- Pushes to `25` run rootless validation plus fresh DIND candidate builds; a separate credentialed step publishes unique build-number tags for each image.
+- Tags are created manually from reviewed `main`. The tag pipeline freshly builds and smoke-tests both images, checks that both immutable tags are unused, publishes them, then updates `jdk-latest` and `jre-latest` to those tested images.
+- Candidate tags are not deployment inputs. JDK and JRE tags are both stored in the consolidated `kernel528/java` repository.
+- This repository is public. The rootless validation job runs without credentials inside the isolated guest; PR code therefore executes there with the guest's rootless Podman boundary.
+- Add `kernel528/java-docker` to the isolated runner's exact repository allowlist only after reviewing this pipeline. Do not add wildcard repository patterns.
+
 ## Build
 ```
 docker build -t kernel528/java:jdk-latest -f jdk/Dockerfile .
-docker build -t kernel528/java:jdk25.0.4.1-1_3.24.3_1 -f jdk/Dockerfile .
+docker build -t kernel528/java:jdk25.0.4.1-1_3.24.3_3 -f jdk/Dockerfile .
 docker build -t kernel528/java:jre-latest -f jre/Dockerfile .
-docker build -t kernel528/java:jre25.0.4.1-1_3.24.3_1 -f jre/Dockerfile .
+docker build -t kernel528/java:jre25.0.4.1-1_3.24.3_3 -f jre/Dockerfile .
 ```
 
 ## CI tags
 Drone publishes tags like:
-- `jdk25.0.4.1-1_3.24.3_1`, `jdk25.0.4.1-1_3.24.3_1-drone-build-<build>`
-- `jre25.0.4.1-1_3.24.3_1`, `jre25.0.4.1-1_3.24.3_1-drone-build-<build>`
+- `jdk25.0.4.1-1_3.24.3_3`, `jdk25.0.4.1-1_3.24.3_3-drone-build-<build>`
+- `jre25.0.4.1-1_3.24.3_3`, `jre25.0.4.1-1_3.24.3_3-drone-build-<build>`
 
 Source of truth: `.drone.yml`. To list current tags quickly:
 ```
@@ -56,7 +65,7 @@ Or use the helper script:
 - If the base image changes, update `FROM kernel528/alpine:<tag>` in both Dockerfiles.
 - Keep `.drone.yml`, `README.md`, and `VERSION.md` aligned with the new tags.
 
-Current base image: `kernel528/alpine:3.24.3_1`.
+Current base image: `kernel528/alpine:3.24.3_3`.
 
 ## CA certificates
 - Set `USE_SYSTEM_CA_CERTS=1` to import system and custom certs at startup.
@@ -66,7 +75,7 @@ Current base image: `kernel528/alpine:3.24.3_1`.
 ## How to use
 These images are foundational to Java apps. Use the JDK image if you need compiler/tools. Example:
 ```
-        FROM kernel528/java:jre25.0.4.1-1_3.24.3_1
+        FROM kernel528/java:jre25.0.4.1-1_3.24.3_3
 
         ENV JARFILE app.jar
 
