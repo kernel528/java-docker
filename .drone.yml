@@ -1,66 +1,90 @@
 kind: pipeline
 type: docker
-name: 25-java-image-build
+name: java-rootless-image-validation
 
-# Trigger conditions
+node:
+  ci-role: rootless-image-smoke
+  platform: linux-amd64
+
 trigger:
+  repo:
+    - kernel528/java-docker
+  branch:
+    - '25'
+    - main
+  event:
+    - pull_request
+    - push
+    - custom
+
+steps:
+  - name: build-and-smoke
+    image: docker:27-cli
+    environment:
+      DOCKER_HOST: unix:///var/run/docker.sock
+      DOCKER_BUILDKIT: "0"
+    commands:
+      - scripts/ci-rootless-java-smoke.sh
+    volumes:
+      - name: podman-socket
+        path: /var/run/docker.sock
+
+volumes:
+  - name: podman-socket
+    host:
+      path: /run/user/1001/podman/podman.sock
+
+---
+
+kind: pipeline
+type: docker
+name: java-maintenance-candidate
+
+trigger:
+  repo:
+    - kernel528/java-docker
   branch:
     - '25'
   event:
-    - pull_request
+    - push
 
-# Build and validate the jdk and jre images in the consolidated Docker Hub repository.
-# Keep the existing JDK/JRE tag prefixes so consumers can distinguish the image types.
+services:
+  - name: docker
+    image: docker:27.5.1-dind
+    privileged: true
+    environment:
+      DOCKER_TLS_CERTDIR: ""
+    volumes:
+      - name: candidate-dockersock
+        path: /var/run
+
 steps:
-  # Build JDK image
-  - name: docker-build-jdk
-    image: plugins/docker
+  - name: build-and-smoke-candidate
+    image: docker:27.5.1-cli
     environment:
-      DOCKER_BUILDKIT: 1
-    when:
-      branch:
-        - '25'
-      when:
-        - push
-    settings:
-      platforms:
-        - linux/amd64
-      username:
-        from_secret: docker_username
-      password:
-        from_secret: docker_password
-      dockerfile: jdk/Dockerfile
-      repo: kernel528/java
-      tags:
-        - jdk-latest
-        - jdk25.0.4.1-1_3.24.3_1
-        - jdk25.0.4.1-1_3.24.3_1-drone-build-${DRONE_BUILD_NUMBER}
+      DOCKER_HOST: unix:///var/run/docker.sock
+      JAVA_IMAGE_REPO: kernel528/java
+    volumes:
+      - name: candidate-dockersock
+        path: /var/run
+    commands:
+      - scripts/ci-build-java-candidate.sh
 
-  # Build JRE Image
-  - name: docker-build-jre
-    image: plugins/docker
+  - name: publish-candidate
+    image: docker:27.5.1-cli
     environment:
-      DOCKER_BUILDKIT: 1
-    when:
-      branch:
-        - '25'
-      when:
-        - push
-    settings:
-      platforms:
-        - linux/amd64
-      username:
+      DOCKER_HOST: unix:///var/run/docker.sock
+      JAVA_IMAGE_REPO: kernel528/java
+      DOCKER_USERNAME:
         from_secret: docker_username
-      password:
+      DOCKER_PASSWORD:
         from_secret: docker_password
-      dockerfile: jre/Dockerfile
-      repo: kernel528/java
-      tags:
-        - jre-latest
-        - jre25.0.4.1-1_3.24.3_1
-        - jre25.0.4.1-1_3.24.3_1-drone-build-${DRONE_BUILD_NUMBER}
+    volumes:
+      - name: candidate-dockersock
+        path: /var/run
+    commands:
+      - scripts/ci-publish-java-candidate.sh
 
-  # Slack notification
   - name: slack-notification
     image: plugins/slack
     when:
@@ -71,51 +95,25 @@ steps:
       webhook:
         from_secret: slack_webhook_drone_alerts
 
+volumes:
+  - name: candidate-dockersock
+    temp: {}
+
 ---
 
 kind: pipeline
 type: docker
-name: java-image-test
+name: main-java-amd64
 
-# Trigger conditions
 trigger:
+  repo:
+    - kernel528/java-docker
   branch:
     - main
   event:
     - push
 
-# Test java-docker images
 steps:
-  # Test JDK Image
-  - name: docker-test-jdk
-    image: kernel528/java:jdk-latest
-    when:
-      branch:
-        - main
-      when:
-        - push
-    commands:
-      - "uname -a"
-      - "cat /etc/os-release"
-      - "java -version"
-      - "javac src/hello-world/HelloWorld.java"
-      - "java -classpath src/hello-world HelloWorld"
-
-  # Test JRE Image
-  - name: docker-test-jre
-    image: kernel528/java:jre-latest
-    when:
-      branch:
-        - main
-      when:
-        - push
-    commands:
-      - "uname -a"
-      - "cat /etc/os-release"
-      - "java -version"
-      - "java -classpath src/hello-world HelloWorld"
-
-  # Slack notification
   - name: slack-notification
     image: plugins/slack
     when:
@@ -130,55 +128,64 @@ steps:
 
 kind: pipeline
 type: docker
-name: java-image-tag
+name: java-immutable-release
 
+# Release tags are manually created from a reviewed main commit. Drone tag
+# events are not branch-associated; the build script validates tag metadata.
 trigger:
+  repo:
+    - kernel528/java-docker
   event:
     - tag
 
-# Build the jdk and jre docker images for amd64 architecture
+services:
+  - name: docker
+    image: docker:27.5.1-dind
+    privileged: true
+    environment:
+      DOCKER_TLS_CERTDIR: ""
+    volumes:
+      - name: release-dockersock
+        path: /var/run
+
 steps:
-  # Build JDK image
-  - name: docker-build-jdk
-    image: plugins/docker
+  - name: build-and-smoke-release
+    image: docker:27.5.1-cli
     environment:
-      DOCKER_BUILDKIT: 1
-    when:
-      event:
-        - tag
-    settings:
-      platforms:
-        - linux/amd64
-      username:
-        from_secret: docker_username
-      password:
-        from_secret: docker_password
-      dockerfile: jdk/Dockerfile
-      repo: kernel528/java
-      tags:
-        - jdk${DRONE_TAG}
+      DOCKER_HOST: unix:///var/run/docker.sock
+      JAVA_IMAGE_REPO: kernel528/java
+    volumes:
+      - name: release-dockersock
+        path: /var/run
+    commands:
+      - scripts/ci-build-java-release.sh
 
-  # Build JRE Image
-  - name: docker-build-jre
-    image: plugins/docker
+  - name: check-immutable-tags-unused
+    image: docker:27.5.1-cli
     environment:
-      DOCKER_BUILDKIT: 1
-    when:
-      event:
-        - tag
-    settings:
-      platforms:
-        - linux/amd64
-      username:
-        from_secret: docker_username
-      password:
-        from_secret: docker_password
-      dockerfile: jre/Dockerfile
-      repo: kernel528/java
-      tags:
-        - jre${DRONE_TAG}
+      DOCKER_HOST: unix:///var/run/docker.sock
+      JAVA_IMAGE_REPO: kernel528/java
+    volumes:
+      - name: release-dockersock
+        path: /var/run
+    commands:
+      - scripts/ci-check-java-release-tags-unused.sh
 
-  # Slack notification
+  - name: publish-immutable-release
+    image: docker:27.5.1-cli
+    environment:
+      DOCKER_HOST: unix:///var/run/docker.sock
+      JAVA_IMAGE_REPO: kernel528/java
+      DOCKER_USERNAME:
+        from_secret: docker_username
+      DOCKER_PASSWORD:
+        from_secret: docker_password
+    volumes:
+      - name: release-dockersock
+        path: /var/run
+    commands:
+      - scripts/ci-publish-java-release.sh
+
   - name: slack-notification
     image: plugins/slack
     when:
@@ -188,3 +195,7 @@ steps:
     settings:
       webhook:
         from_secret: slack_webhook_drone_alerts
+
+volumes:
+  - name: release-dockersock
+    temp: {}
