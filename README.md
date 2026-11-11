@@ -38,15 +38,15 @@ This independent repository is coordinated by [`docker-workspace`](https://githu
 ## Build
 ```
 docker build -t kernel528/java:jdk-latest -f jdk/Dockerfile .
-docker build -t kernel528/java:jdk25.0.4.1-1_3.24.3_3 -f jdk/Dockerfile .
+docker build -t kernel528/java:jdk25.0.4.1-1_3.24.4_1 -f jdk/Dockerfile .
 docker build -t kernel528/java:jre-latest -f jre/Dockerfile .
-docker build -t kernel528/java:jre25.0.4.1-1_3.24.3_3 -f jre/Dockerfile .
+docker build -t kernel528/java:jre25.0.4.1-1_3.24.4_1 -f jre/Dockerfile .
 ```
 
 ## CI tags
 Drone publishes tags like:
-- `jdk25.0.4.1-1_3.24.3_3`, `jdk25.0.4.1-1_3.24.3_3-drone-build-<build>`
-- `jre25.0.4.1-1_3.24.3_3`, `jre25.0.4.1-1_3.24.3_3-drone-build-<build>`
+- `jdk25.0.4.1-1_3.24.4_1`, `jdk25.0.4.1-1_3.24.4_1-drone-build-<build>`
+- `jre25.0.4.1-1_3.24.4_1`, `jre25.0.4.1-1_3.24.4_1-drone-build-<build>`
 
 Source of truth: `.drone.yml`. To list current tags quickly:
 ```
@@ -65,7 +65,7 @@ Or use the helper script:
 - If the base image changes, update `FROM kernel528/alpine:<tag>` in both Dockerfiles.
 - Keep `.drone.yml`, `README.md`, and `VERSION.md` aligned with the new tags.
 
-Current base image: `kernel528/alpine:3.24.3_3`.
+Current base image: `kernel528/alpine:3.24.4_1`.
 
 ## CA certificates
 - Set `USE_SYSTEM_CA_CERTS=1` to import system and custom certs at startup.
@@ -75,7 +75,7 @@ Current base image: `kernel528/alpine:3.24.3_3`.
 ## How to use
 These images are foundational to Java apps. Use the JDK image if you need compiler/tools. Example:
 ```
-        FROM kernel528/java:jre25.0.4.1-1_3.24.3_3
+        FROM kernel528/java:jre25.0.4.1-1_3.24.4_1
 
         ENV JARFILE app.jar
 
